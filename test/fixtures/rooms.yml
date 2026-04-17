@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  game: one
+  herd: one
+  admin: one
+  code: MyString
+  status: MyString
+  config: 
+
+two:
+  game: two
+  herd: two
+  admin: two
+  code: MyString
+  status: MyString
+  config: 
