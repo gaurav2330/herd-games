@@ -1,6 +1,21 @@
 Rails.application.routes.draw do
+  root "squads#index"
+
   resource :session
   resources :passwords, param: :token
+
+  resources :squads do
+    resources :squad_memberships, only: [:create, :destroy]
+  end
+  
+  resources :rooms, only: [:new, :create, :show] do
+    collection do
+      get 'join/:code', to: 'rooms#join'
+    end
+    resources :room_memberships, only: [:create]
+  end
+  
+  resources :games, only: [:index]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
