@@ -36,7 +36,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_174205) do
     t.jsonb "config"
     t.datetime "created_at", null: false
     t.bigint "game_id", null: false
-    t.bigint "squad_id", null: false
+    t.bigint "squad_id"
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_rooms_on_admin_id"
@@ -82,10 +82,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_174205) do
   end
 
   create_table "squads", force: :cascade do |t|
+    t.bigint "admin_id", null: false
     t.datetime "created_at", null: false
     t.text "description"
     t.string "name"
     t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_squads_on_admin_id"
   end
 
   create_table "turns", force: :cascade do |t|
@@ -105,6 +107,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_174205) do
     t.string "email_address", null: false
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
+    t.string "username", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
@@ -118,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_174205) do
   add_foreign_key "sessions", "users"
   add_foreign_key "squad_memberships", "squads"
   add_foreign_key "squad_memberships", "users"
+  add_foreign_key "squads", "users", column: "admin_id"
   add_foreign_key "turns", "rounds"
   add_foreign_key "turns", "users"
 end

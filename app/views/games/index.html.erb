@@ -30,19 +30,24 @@
 
           <% if index == 0 %>
             <!-- Featured Game Card (large) -->
-            <div class="md:col-span-2 lg:col-span-2 flex flex-col bg-surface-container-lowest border-4 border-on-surface p-6 sticker-rotate bouncy-hover relative group overflow-hidden">
+            <div class="md:col-span-2 lg:col-span-2 flex flex-col bg-surface-container-lowest border-4 border-on-surface p-6 sticker-rotate relative group overflow-hidden">
               <div class="absolute top-4 right-4 bg-secondary-container text-on-secondary-fixed font-headline font-black px-4 py-1 border-2 border-on-surface -rotate-3 z-10 text-sm tracking-widest">
                 LIVE NOW
               </div>
-              <div class="h-64 mb-6 border-4 border-on-surface overflow-hidden relative bg-tertiary flex items-center justify-center">
-                <span class="material-symbols-outlined text-white opacity-30" style="font-size: 120px; font-variation-settings: 'FILL' 1;">edit_note</span>
-                <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-6">
-                  <div class="flex gap-4 items-center">
-                    <span class="material-symbols-outlined text-white text-5xl">edit_note</span>
-                    <h2 class="font-headline text-5xl font-black text-white tracking-tighter uppercase italic"><%= game.name %></h2>
+
+              <%# Card image/title area — clicking this goes to detail page %>
+              <%= link_to game_path(game), class: "block" do %>
+                <div class="h-64 mb-6 border-4 border-on-surface overflow-hidden relative bg-tertiary flex items-center justify-center bouncy-hover">
+                  <span class="material-symbols-outlined text-white opacity-30" style="font-size: 120px; font-variation-settings: 'FILL' 1;">edit_note</span>
+                  <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-6">
+                    <div class="flex gap-4 items-center">
+                      <span class="material-symbols-outlined text-white text-5xl">edit_note</span>
+                      <h2 class="font-headline text-5xl font-black text-white tracking-tighter uppercase italic"><%= game.name %></h2>
+                    </div>
                   </div>
                 </div>
-              </div>
+              <% end %>
+
               <div class="flex-1 flex flex-col justify-between">
                 <div>
                   <p class="text-on-surface font-bold text-lg leading-snug">
@@ -53,30 +58,36 @@
                     <span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">Drawing</span>
                   </div>
                 </div>
-                <div class="mt-8">
-                  <%= link_to game_path(game), class: "w-full block bg-primary text-on-primary font-headline text-2xl font-black py-4 border-4 border-on-primary-container shadow-[4px_4px_0px_#4c0600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center gap-3" do %>
+                <%# Play Now — separate from card link, will go to room creation later %>
+                <div class="mt-8 flex gap-4">
+                  <button class="flex-1 bg-primary text-on-primary font-headline text-2xl font-black py-4 border-4 border-on-primary-container shadow-[4px_4px_0px_#4c0600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center gap-3">
                     <span class="material-symbols-outlined font-black">play_arrow</span>
                     PLAY NOW
-                  <% end %>
+                  </button>
+                  <%= link_to "DETAILS", game_path(game), class: "bg-surface-container text-on-surface font-headline font-black py-4 px-6 border-4 border-on-surface shadow-[4px_4px_0px_#2d2f2f] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center" %>
                 </div>
               </div>
             </div>
 
           <% else %>
             <!-- Other active games (smaller cards) -->
-            <div class="flex flex-col bg-surface-container-lowest border-4 border-on-surface p-6 sticker-rotate-alt bouncy-hover relative group overflow-hidden">
-              <div class="h-48 mb-6 border-4 border-on-surface overflow-hidden relative bg-tertiary flex items-center justify-center">
-                <span class="material-symbols-outlined text-white opacity-30" style="font-size: 80px; font-variation-settings: 'FILL' 1;">videogame_asset</span>
-                <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-4">
-                  <h3 class="font-headline text-3xl font-black text-white tracking-tighter uppercase italic"><%= game.name %></h3>
+            <div class="flex flex-col bg-surface-container-lowest border-4 border-on-surface p-6 sticker-rotate-alt relative group overflow-hidden">
+              <%= link_to game_path(game), class: "block bouncy-hover" do %>
+                <div class="h-48 mb-6 border-4 border-on-surface overflow-hidden relative bg-tertiary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-white opacity-30" style="font-size: 80px; font-variation-settings: 'FILL' 1;">videogame_asset</span>
+                  <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-4">
+                    <h3 class="font-headline text-3xl font-black text-white tracking-tighter uppercase italic"><%= game.name %></h3>
+                  </div>
                 </div>
-              </div>
+              <% end %>
               <div class="flex-1 flex flex-col justify-between">
                 <p class="text-on-surface font-bold text-sm leading-snug">
                   <%= game.config["description"] || "A fun multiplayer game for your squad." %>
                 </p>
                 <div class="mt-6">
-                  <%= link_to "PLAY NOW", game_path(game), class: "w-full block text-center bg-primary text-on-primary font-headline font-black py-3 border-4 border-on-surface shadow-[4px_4px_0px_#4c0600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest text-sm" %>
+                  <button class="w-full bg-primary text-on-primary font-headline font-black py-3 border-4 border-on-surface shadow-[4px_4px_0px_#4c0600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest text-sm">
+                    PLAY NOW
+                  </button>
                 </div>
               </div>
             </div>
@@ -85,7 +96,7 @@
         <% end %>
       <% end %>
 
-      <!-- Coming Soon Cards (always shown) -->
+      <!-- Coming Soon Cards -->
       <div class="flex flex-col bg-surface-container-low border-4 border-outline-variant border-dotted p-6 sticker-rotate-alt grayscale opacity-80">
         <div class="h-48 mb-6 bg-surface-container-high flex items-center justify-center border-4 border-outline-variant border-dotted">
           <span class="material-symbols-outlined text-7xl text-outline-variant">videogame_asset</span>

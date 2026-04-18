@@ -10,8 +10,11 @@
 
 Game.find_or_create_by(name: "Skribbl") do |game|
   game.config = {
-    word_list: ["elephant", "guitar", "volcano", "bicycle", "umbrella", 
-                "lighthouse", "penguin", "rainbow", "telescope", "cactus"],
-    display_picture: "skribbl.png"
+    word_list: ["elephant", "guitar", "volcano", "bicycle", "umbrella"],
+    tagline: "Draw. Guess. Dominate.",
+    rounds: 8,
+    draw_duration: 80,
+    word_selection_duration: 10,
+    number_of_words: 3
   }
 end

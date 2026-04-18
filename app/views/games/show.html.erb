@@ -1,0 +1,182 @@
+<style>
+  .sticker-border { border: 4px solid #2d2f2f; }
+  .neo-shadow { box-shadow: 4px 4px 0px 0px rgba(45, 47, 47, 1); }
+  .neo-shadow-large { box-shadow: 8px 8px 0px 0px rgba(45, 47, 47, 1); }
+  .back-out-hover:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px 0px rgba(45, 47, 47, 1); }
+  .back-out-active:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px rgba(45, 47, 47, 1); }
+  body { background-image: radial-gradient(#dcdddd 1.5px, transparent 1.5px); background-size: 24px 24px; }
+</style>
+
+<main class="pt-8 pb-32 max-w-7xl mx-auto px-6">
+
+  <!-- Hero Section -->
+  <section class="relative grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20 items-center">
+    <div class="lg:col-span-7 flex flex-col items-start gap-6">
+      <div class="flex gap-3">
+        <span class="bg-secondary-container text-on-secondary-container px-3 py-1 font-headline font-bold text-xs sticker-border neo-shadow -rotate-2">2-10 PLAYERS</span>
+        <span class="bg-primary text-on-primary px-3 py-1 font-headline font-bold text-xs sticker-border neo-shadow rotate-1">LIVE NOW</span>
+      </div>
+      <h1 class="font-headline text-7xl md:text-9xl font-black italic tracking-tighter text-primary leading-none uppercase">
+        <%= @game.name %>
+      </h1>
+      <p class="font-headline text-2xl md:text-3xl font-bold text-on-surface tracking-tight max-w-xl">
+        <%= @game.config["tagline"] || "Draw. Guess. Dominate." %>
+      </p>
+      <div class="flex flex-wrap gap-4 mt-4">
+        <button class="bg-primary hover:bg-primary-dim text-on-primary text-xl font-headline font-black px-10 py-5 sticker-border neo-shadow-large back-out-hover back-out-active transition-all flex items-center gap-3">
+          <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+          PLAY NOW
+        </button>
+        <button class="bg-surface-container-lowest text-on-surface text-xl font-headline font-bold px-8 py-5 sticker-border neo-shadow back-out-hover back-out-active transition-all">
+          VIEW ROOMS
+        </button>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 relative">
+      <div class="sticker-border neo-shadow bg-surface-container-lowest p-4 rotate-2 aspect-square overflow-hidden flex items-center justify-center bg-tertiary">
+        <span class="material-symbols-outlined text-white opacity-20" style="font-size: 200px; font-variation-settings: 'FILL' 1;">edit_note</span>
+      </div>
+      <div class="absolute -top-6 -right-6 bg-tertiary text-on-tertiary p-4 sticker-border neo-shadow -rotate-12">
+        <span class="material-symbols-outlined text-4xl">brush</span>
+      </div>
+      <div class="absolute -bottom-4 -left-8 bg-secondary-fixed text-on-secondary-fixed p-3 sticker-border neo-shadow rotate-6">
+        <span class="material-symbols-outlined text-3xl">lightbulb</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game Info Cards -->
+  <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-20">
+    <div class="bg-surface-container p-6 sticker-border neo-shadow flex flex-col items-center justify-center text-center">
+      <span class="material-symbols-outlined text-primary text-3xl mb-2">groups</span>
+      <span class="font-headline font-black text-xl">2-10</span>
+      <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Players</span>
+    </div>
+    <div class="bg-surface-container p-6 sticker-border neo-shadow flex flex-col items-center justify-center text-center -rotate-1">
+      <span class="material-symbols-outlined text-tertiary text-3xl mb-2">refresh</span>
+      <span class="font-headline font-black text-xl"><%= @game.config["rounds"] || 8 %></span>
+      <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Rounds</span>
+    </div>
+    <div class="bg-surface-container p-6 sticker-border neo-shadow flex flex-col items-center justify-center text-center rotate-1">
+      <span class="material-symbols-outlined text-secondary text-3xl mb-2">timer</span>
+      <span class="font-headline font-black text-xl"><%= @game.config["draw_duration"] || 80 %>s</span>
+      <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Draw Duration</span>
+    </div>
+    <div class="bg-surface-container p-6 sticker-border neo-shadow flex flex-col items-center justify-center text-center">
+      <span class="material-symbols-outlined text-primary-container text-3xl mb-2">hourglass_top</span>
+      <span class="font-headline font-black text-xl"><%= @game.config["word_selection_duration"] || 10 %>s</span>
+      <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Word Choice</span>
+    </div>
+    <div class="bg-surface-container p-6 sticker-border neo-shadow flex flex-col items-center justify-center text-center rotate-2">
+      <span class="material-symbols-outlined text-on-tertiary-fixed-variant text-3xl mb-2">list_alt</span>
+      <span class="font-headline font-black text-xl"><%= @game.config["number_of_words"] || 3 %></span>
+      <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Word Options</span>
+    </div>
+  </section>
+
+  <!-- How To Play -->
+  <section class="mb-20">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="font-headline text-4xl font-black tracking-tight uppercase">How to Play</h2>
+      <div class="h-1 flex-grow mx-8 bg-surface-container-highest"></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="bg-surface-container-lowest p-8 sticker-border neo-shadow flex flex-col gap-4">
+        <div class="bg-tertiary text-on-tertiary w-12 h-12 flex items-center justify-center font-headline font-black text-2xl sticker-border">1</div>
+        <h3 class="font-headline text-2xl font-bold">Pick a Word</h3>
+        <p class="text-on-surface-variant">Choose from three random words in 10 seconds. If you don't pick, one is chosen for you automatically.</p>
+      </div>
+
+      <div class="bg-secondary-container p-8 sticker-border neo-shadow flex flex-col gap-4 md:translate-y-4">
+        <div class="bg-on-secondary-container text-secondary-container w-12 h-12 flex items-center justify-center font-headline font-black text-2xl sticker-border">2</div>
+        <h3 class="font-headline text-2xl font-bold">Draw It</h3>
+        <p class="text-on-secondary-container">80 seconds on the canvas. Use colors, lines, fills. Speed and clarity are your best weapons.</p>
+        <div class="flex gap-2 mt-4">
+          <div class="w-10 h-10 bg-primary sticker-border"></div>
+          <div class="w-10 h-10 bg-tertiary sticker-border"></div>
+          <div class="w-10 h-10 bg-secondary sticker-border"></div>
+          <div class="w-10 h-10 bg-on-surface sticker-border"></div>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-lowest p-8 sticker-border neo-shadow flex flex-col gap-4">
+        <div class="bg-primary text-on-primary w-12 h-12 flex items-center justify-center font-headline font-black text-2xl sticker-border">3</div>
+        <h3 class="font-headline text-2xl font-bold">Score Points</h3>
+        <p class="text-on-surface-variant">Faster guesses earn more points. Drawers score based on how many people guessed correctly.</p>
+        <div class="mt-4 bg-surface p-4 sticker-border">
+          <div class="flex justify-between items-center text-sm font-bold border-b-2 border-surface-container-highest pb-2 mb-2">
+            <span>GUESSER</span>
+            <span class="text-primary">+500 PTS</span>
+          </div>
+          <div class="flex justify-between items-center text-sm font-bold">
+            <span>DRAWER</span>
+            <span class="text-tertiary">+350 PTS</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Leaderboard + CTA -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-20">
+
+    <!-- Leaderboard -->
+    <div class="bg-surface-container-low p-8 sticker-border neo-shadow -rotate-1">
+      <h3 class="font-headline text-3xl font-black mb-8 uppercase flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+        High Scores
+      </h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4 bg-secondary-container p-4 sticker-border neo-shadow -translate-x-2">
+          <span class="font-headline font-black text-2xl w-8">1</span>
+          <div class="w-12 h-12 bg-white sticker-border flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl">face</span>
+          </div>
+          <span class="font-headline font-bold text-xl flex-grow">PixelMaster</span>
+          <span class="font-headline font-black text-2xl">4,820</span>
+        </div>
+        <div class="flex items-center gap-4 bg-surface-container-lowest p-4 sticker-border neo-shadow translate-x-2">
+          <span class="font-headline font-black text-2xl w-8">2</span>
+          <div class="w-12 h-12 bg-surface-container sticker-border flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl">sentiment_satisfied</span>
+          </div>
+          <span class="font-headline font-bold text-xl flex-grow">DoodleKing</span>
+          <span class="font-headline font-black text-2xl">4,150</span>
+        </div>
+        <div class="flex items-center gap-4 bg-surface-container-lowest p-4 sticker-border neo-shadow -translate-x-1">
+          <span class="font-headline font-black text-2xl w-8">3</span>
+          <div class="w-12 h-12 bg-surface-container sticker-border flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl">palette</span>
+          </div>
+          <span class="font-headline font-bold text-xl flex-grow">SketchQueen</span>
+          <span class="font-headline font-black text-2xl">3,980</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="flex flex-col gap-6">
+      <div class="bg-primary text-on-primary p-10 sticker-border neo-shadow rotate-1">
+        <h2 class="font-headline text-4xl font-black mb-2">Ready to Draw?</h2>
+        <p class="text-on-primary/80 mb-8">Host your own lobby and invite friends for a custom match.</p>
+        <button class="w-full bg-surface-container-lowest text-primary py-5 font-headline font-black text-2xl sticker-border neo-shadow back-out-hover back-out-active transition-all mb-4">
+          CREATE ROOM
+        </button>
+      </div>
+      <div class="bg-tertiary-container p-8 sticker-border neo-shadow">
+        <h3 class="font-headline text-2xl font-black mb-4 uppercase">Join a Room</h3>
+        <div class="flex gap-2">
+          <input class="flex-grow bg-white sticker-border px-4 py-4 font-headline font-bold placeholder:text-outline text-xl focus:ring-0 focus:outline-none focus:border-tertiary transition-all uppercase" placeholder="ENTER CODE" type="text"/>
+          <button class="bg-tertiary text-on-tertiary px-8 py-4 font-headline font-black sticker-border neo-shadow back-out-hover back-out-active">
+            JOIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
