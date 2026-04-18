@@ -7,8 +7,8 @@ servers:
     - 204.168.248.41
 
 proxy:
-  ssl: false
-  host: 204.168.248.41
+  ssl: true
+  host: play-herd.com
   app_port: 3000
 
 registry:
