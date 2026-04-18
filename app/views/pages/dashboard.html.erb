@@ -1,0 +1,155 @@
+<style>
+  .pixel-border { box-shadow: 4px 4px 0px 0px #2D2F2F; }
+  .sticker-tilt-left { transform: rotate(-1.5deg); }
+  .sticker-tilt-right { transform: rotate(1.5deg); }
+  .custom-cubic { transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+</style>
+
+<div class="flex min-h-screen bg-surface font-body text-on-surface">
+
+  <!-- Sidebar -->
+  <nav class="fixed left-0 top-0 pt-20 pb-8 flex flex-col h-full w-72 border-r-4 border-on-surface bg-surface-container z-30">
+
+    <!-- User Info -->
+    <div class="px-6 mt-6 mb-8">
+      <div class="flex items-center gap-3 p-4 bg-surface-container-lowest border-4 border-on-surface sticker-tilt-left">
+        <div class="w-12 h-12 rounded-full border-2 border-on-surface bg-primary flex items-center justify-center text-on-primary font-headline font-black text-lg">
+          <%= current_user.username&.first&.upcase || "?" %>
+        </div>
+        <div>
+          <h3 class="font-headline font-bold text-lg leading-tight uppercase"><%= current_user.username || "Player" %></h3>
+          <p class="text-xs font-bold text-secondary uppercase tracking-widest">Rank: Recruit</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav Links -->
+    <div class="flex-1 px-4 space-y-2">
+      <%= link_to dashboard_path, class: "flex items-center gap-4 bg-gradient-to-br from-primary to-primary-container text-white rounded-lg border-2 border-on-surface transform -rotate-1 py-3 px-4 custom-cubic" do %>
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
+        <span class="font-bold font-headline">Home</span>
+      <% end %>
+      <%= link_to games_path, class: "flex items-center gap-4 text-on-surface py-3 px-4 hover:bg-secondary hover:text-on-secondary transition-all rounded-lg font-bold" do %>
+        <span class="material-symbols-outlined">videogame_asset</span>
+        <span>Games</span>
+      <% end %>
+      <a href="#" class="flex items-center gap-4 text-on-surface py-3 px-4 hover:bg-secondary hover:text-on-secondary transition-all rounded-lg font-bold">
+        <span class="material-symbols-outlined">leaderboard</span>
+        <span>High Scores</span>
+      </a>
+      <a href="#" class="flex items-center gap-4 text-on-surface py-3 px-4 hover:bg-secondary hover:text-on-secondary transition-all rounded-lg font-bold">
+        <span class="material-symbols-outlined">settings</span>
+        <span>Settings</span>
+      </a>
+    </div>
+
+  </nav>
+  <!-- End Sidebar -->
+
+  <!-- Main Content -->
+  <main class="ml-72 flex-1 p-8 pt-24">
+
+    <!-- Hero Bento -->
+    <div class="grid grid-cols-12 gap-6 mb-12">
+      <div class="col-span-12 lg:col-span-8 bg-primary-container border-4 border-on-surface p-8 relative overflow-hidden sticker-tilt-right">
+        <div class="relative z-10">
+          <h1 class="text-5xl font-headline font-black text-on-primary-container uppercase tracking-tighter mb-4 leading-none">
+            Welcome, <%= current_user.username&.upcase || "PLAYER" %>
+          </h1>
+          <p class="text-xl font-bold text-on-primary-container/80 max-w-md">
+            Manage your arcade empire and coordinate with your squad mates for the next neon tournament.
+          </p>
+        </div>
+        <span class="material-symbols-outlined absolute -right-8 -bottom-8 text-[200px] text-on-primary-container opacity-10 rotate-12">videogame_asset</span>
+      </div>
+      <div class="col-span-12 lg:col-span-4 bg-secondary-container border-4 border-on-surface p-8 flex flex-col justify-center items-center text-center">
+        <span class="text-sm font-black uppercase tracking-[0.2em] text-on-secondary-container mb-2">Season Progress</span>
+        <div class="text-6xl font-headline font-black text-on-secondary-container">0%</div>
+        <div class="w-full bg-on-secondary-container/20 h-4 mt-4 border-2 border-on-secondary-container">
+          <div class="bg-primary h-full w-0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-12">
+      <h2 class="font-headline font-black text-2xl uppercase mb-6 tracking-tight">Quick Actions</h2>
+      <div class="flex gap-4 flex-wrap">
+        <%= link_to games_path, class: "bg-primary text-on-primary font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-8 py-4 sticker-shadow sticker-shadow-hover transition-all flex items-center gap-3" do %>
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+          Play a Game
+        <% end %>
+        <a href="#" class="bg-surface-container-lowest text-on-surface font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-8 py-4 sticker-shadow sticker-shadow-hover transition-all flex items-center gap-3">
+          <span class="material-symbols-outlined">group_add</span>
+          Join a Room
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="grid grid-cols-12 gap-6">
+
+      <!-- Stats -->
+      <div class="col-span-12 md:col-span-4 bg-surface-container-high border-4 border-on-surface p-6">
+        <h5 class="font-headline font-black text-lg uppercase mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined">trending_up</span>
+          Stats
+        </h5>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between items-end mb-1">
+              <span class="text-xs font-bold uppercase">Games Played</span>
+              <span class="text-lg font-headline font-black">0</span>
+            </div>
+            <div class="h-2 bg-on-surface/10 border border-on-surface">
+              <div class="h-full bg-primary w-0"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between items-end mb-1">
+              <span class="text-xs font-bold uppercase">Total Score</span>
+              <span class="text-lg font-headline font-black">0</span>
+            </div>
+            <div class="h-2 bg-on-surface/10 border border-on-surface">
+              <div class="h-full bg-tertiary w-0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="col-span-12 md:col-span-8 bg-surface-container-low border-4 border-on-surface p-6 sticker-tilt-right">
+        <h5 class="font-headline font-black text-lg uppercase mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined">history</span>
+          Recent Activity
+        </h5>
+        <div class="flex items-center justify-center h-24 border-2 border-dashed border-outline-variant">
+          <p class="text-on-surface-variant font-bold uppercase text-sm">No activity yet. Play a game!</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+  <!-- End Main Content -->
+
+</div>
+
+<!-- Floating Action Button -->
+<button class="fixed bottom-10 right-10 w-20 h-20 bg-primary text-white flex items-center justify-center border-4 border-on-surface rounded-full shadow-[6px_6px_0px_0px_#2D2F2F] hover:translate-y-[-4px] hover:translate-x-[-4px] hover:shadow-[10px_10px_0px_0px_#2D2F2F] transition-all custom-cubic z-50 active:translate-y-[4px] active:translate-x-[4px] active:shadow-none group">
+  <span class="material-symbols-outlined text-4xl group-hover:rotate-90 transition-transform duration-300">add</span>
+  <span class="absolute -top-12 right-0 bg-on-surface text-surface text-[10px] font-black py-1 px-3 uppercase whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Quick Action</span>
+</button>
+
+<!-- Footer -->
+<footer class="ml-72 flex flex-col items-center gap-6 w-full py-12 px-8 bg-surface border-t-4 border-on-surface">
+  <div class="flex flex-wrap justify-center gap-8">
+    <a href="#" class="text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Support</a>
+    <a href="#" class="text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Privacy</a>
+    <a href="#" class="text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Discord</a>
+  </div>
+  <span class="text-lg font-bold text-secondary font-headline uppercase tracking-tighter">HERD ARCADE</span>
+  <p class="text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+    &copy; <%= Time.current.year %> HERD ARCADE. INSERT COIN TO CONTINUE.
+  </p>
+</footer>

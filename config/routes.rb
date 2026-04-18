@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
-  root "squads#index"
+  get "registrations/new"
+  get "registrations/create"
+  root "pages#home"
 
+  get "dashboard", to: "pages#dashboard"
+
+  resources :registrations, only: [:new, :create]
   resource :session
   resources :passwords, param: :token
 
@@ -15,7 +20,7 @@ Rails.application.routes.draw do
     resources :room_memberships, only: [:create]
   end
   
-  resources :games, only: [:index]
+  resources :games, only: [:index, :show]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

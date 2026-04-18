@@ -7,3 +7,11 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+Game.find_or_create_by(name: "Skribbl") do |game|
+  game.config = {
+    word_list: ["elephant", "guitar", "volcano", "bicycle", "umbrella", 
+                "lighthouse", "penguin", "rainbow", "telescope", "cactus"],
+    display_picture: "skribbl.png"
+  }
+end

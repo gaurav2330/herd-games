@@ -21,9 +21,126 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#b41b00",
+              "primary-container": "#ff775d",
+              "on-primary": "#ffefec",
+              "on-primary-container": "#4c0600",
+              "secondary": "#6e5900",
+              "secondary-container": "#fdd000",
+              "on-secondary": "#fff2d1",
+              "on-secondary-container": "#584700",
+              "on-secondary-fixed": "#423500",
+              "tertiary": "#0545ef",
+              "tertiary-container": "#9bacff",
+              "on-tertiary": "#f2f1ff",
+              "on-tertiary-container": "#002389",
+              "on-tertiary-fixed-variant": "#002a9e",
+              "surface": "#f7f6f6",
+              "surface-container": "#e8e8e8",
+              "surface-container-low": "#f0f1f1",
+              "surface-container-high": "#e2e3e3",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#dcdddd",
+              "surface-variant": "#dcdddd",
+              "surface-dim": "#d3d5d5",
+              "on-surface": "#2d2f2f",
+              "on-surface-variant": "#5a5c5c",
+              "outline": "#767777",
+              "outline-variant": "#acadad",
+              "error": "#b41340",
+              "error-container": "#f74b6d",
+              "on-error": "#ffefef",
+              "inverse-surface": "#0d0e0f",
+              "inverse-on-surface": "#9c9d9d",
+              "primary-dim": "#9e1700",
+              "secondary-dim": "#604e00",
+              "tertiary-dim": "#003bd4",
+              "primary-fixed": "#ff775d",
+              "primary-fixed-dim": "#ff5c3e",
+              "secondary-fixed": "#fdd000",
+              "secondary-fixed-dim": "#ecc200",
+              "tertiary-fixed": "#9bacff",
+              "tertiary-fixed-dim": "#889dff",
+            },
+            fontFamily: {
+              headline: ["Space Grotesk"],
+              body: ["Plus Jakarta Sans"],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .sticker-shadow { box-shadow: 4px 4px 0px #2D2F2F; }
+      .sticker-shadow-hover:hover {
+        box-shadow: 6px 6px 0px #2D2F2F;
+        transform: translate(-2px, -2px);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .bg-grid {
+        background-size: 40px 40px;
+        background-image: radial-gradient(circle, #dcdddd 1px, transparent 1px);
+      }
+      .sticker-rotate { transform: rotate(-1.5deg); }
+      .sticker-rotate-alt { transform: rotate(1deg); }
+      .bouncy-hover { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+      .bouncy-hover:hover { transform: scale(1.02) translateY(-4px); }
+      .custom-cubic { transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+    </style>
   </head>
 
-  <body>
+  <body class="bg-surface font-body text-on-surface min-h-screen">
+
+    <!-- Shared Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b-4 border-on-surface flex justify-between items-center px-8 h-20">
+      <div class="flex items-center gap-12">
+        <%= link_to "HERD", root_path, class: "text-3xl font-black italic tracking-tighter text-primary font-headline" %>
+        <div class="hidden md:flex items-center gap-8 font-headline">
+          <% if authenticated? %>
+            <%= link_to "Home", dashboard_path, class: "text-on-surface font-bold hover:scale-105 hover:-rotate-1 transition-transform duration-200 #{request.path == dashboard_path ? 'text-primary border-b-4 border-primary' : ''}" %>
+            <%= link_to "Games", games_path, class: "text-on-surface font-bold hover:scale-105 hover:-rotate-1 transition-transform duration-200 #{request.path == games_path ? 'text-primary border-b-4 border-primary' : ''}" %>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <% if authenticated? %>
+          <span class="font-headline font-bold uppercase text-sm text-on-surface-variant hidden md:block">
+            <%= current_user.username&.upcase %>
+          </span>
+          <%= button_to "Logout", session_path, method: :delete,
+              class: "bg-primary text-on-primary font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-4 py-2 sticker-shadow sticker-shadow-hover transition-all cursor-pointer" %>
+        <% else %>
+          <%= link_to "Log In", new_session_path, class: "font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-6 py-2 sticker-shadow sticker-shadow-hover transition-all" %>
+          <%= link_to "Sign Up", new_registration_path, class: "bg-primary text-on-primary font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-6 py-2 sticker-shadow sticker-shadow-hover transition-all" %>
+        <% end %>
+      </div>
+    </nav>
+
+    <!-- Flash messages -->
+    <% if notice %>
+      <div class="fixed top-20 left-0 right-0 z-40 bg-secondary-container border-b-4 border-on-surface px-8 py-3 text-center font-headline font-bold uppercase tracking-wider text-on-surface">
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="fixed top-20 left-0 right-0 z-40 bg-primary border-b-4 border-on-surface px-8 py-3 text-center font-headline font-bold uppercase tracking-wider text-on-primary">
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <!-- Main content with top padding for fixed navbar -->
     <%= yield %>
+
   </body>
 </html>

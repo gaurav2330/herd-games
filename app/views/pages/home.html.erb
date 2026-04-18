@@ -1,0 +1,138 @@
+<!-- Navbar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b-4 border-on-surface" style="opacity: 0.95;">
+  <div class="flex justify-between items-center px-6 h-20 max-w-7xl mx-auto">
+    <span class="text-2xl font-black text-primary font-headline tracking-tighter uppercase">HERD ARCADE</span>
+    <nav class="hidden md:flex items-center gap-8">
+      <a href="#" class="text-primary font-bold border-b-4 border-primary font-headline tracking-tighter uppercase hover:scale-105 transition-transform">Home</a>
+      <a href="#" class="text-on-surface font-headline tracking-tighter uppercase hover:scale-105 transition-transform">Squad Feed</a>
+      <a href="#" class="text-on-surface font-headline tracking-tighter uppercase hover:scale-105 transition-transform">Power-Ups</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform">search</span>
+      <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform">notifications</span>
+      <%= link_to "Log In", new_session_path, class: "font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-6 py-2 sticker-shadow sticker-shadow-hover transition-all" %>
+      <%= link_to "Sign Up", new_registration_path, class: "bg-primary text-on-primary font-headline font-black uppercase tracking-tighter border-4 border-on-surface px-6 py-2 sticker-shadow sticker-shadow-hover transition-all" %>
+    </div>
+  </div>
+</header>
+
+<main class="bg-surface font-body text-on-surface">
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden py-20 px-6 lg:px-24 flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto">
+    <div class="flex-1 z-10">
+      <div class="inline-block bg-secondary-container text-on-surface px-4 py-1 mb-6 border-2 border-on-surface font-headline font-bold uppercase tracking-widest -rotate-2 sticker-shadow">
+        NOW IN OPEN BETA
+      </div>
+      <h1 class="font-headline font-extrabold text-7xl lg:text-9xl text-primary leading-[0.9] tracking-tighter mb-8 uppercase">
+        Game <br/>Night, <br/>Online.
+      </h1>
+      <p class="text-xl lg:text-2xl text-on-surface-variant max-w-xl mb-10 font-medium">
+        The social arcade where your squad hangs out, levels up, and wreaks digital havoc together. No boring menus, just pure play.
+      </p>
+      <div class="flex flex-wrap gap-6">
+        <%= link_to "Create Account", new_registration_path, class: "bg-primary text-on-primary px-10 py-5 text-xl font-headline font-black uppercase tracking-tighter border-4 border-on-surface sticker-shadow sticker-shadow-hover transition-all active:scale-95" %>
+        <%= link_to "Log In", new_session_path, class: "bg-surface-container-lowest text-on-surface px-10 py-5 text-xl font-headline font-black uppercase tracking-tighter border-4 border-on-surface sticker-shadow sticker-shadow-hover transition-all active:scale-95" %>
+      </div>
+    </div>
+
+    <div class="flex-1 relative">
+      <div class="relative w-full aspect-square bg-tertiary border-4 border-on-surface rotate-2 sticker-shadow overflow-hidden flex items-center justify-center">
+        <span class="material-symbols-outlined text-white" style="font-size: 160px; font-variation-settings: 'FILL' 1;">sports_esports</span>
+      </div>
+      <div class="absolute -top-6 -right-6 bg-secondary text-on-secondary p-4 border-4 border-on-surface rotate-12 sticker-shadow">
+        <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">bolt</span>
+      </div>
+      <div class="absolute -bottom-10 -left-10 bg-tertiary-container text-on-tertiary-container p-4 border-4 border-on-surface -rotate-6 sticker-shadow">
+        <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">groups</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-24 px-6 lg:px-24 bg-surface-container">
+    <h2 class="font-headline font-black text-5xl text-on-surface mb-16 uppercase tracking-tighter text-center italic">
+      Arcade <span class="text-primary">Essentials</span>
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+
+      <!-- Large Feature -->
+      <div class="md:col-span-2 lg:col-span-2 bg-surface-container-lowest p-10 border-4 border-on-surface sticker-shadow hover:-rotate-1 transition-transform">
+        <div class="w-16 h-16 bg-primary-container border-2 border-on-surface flex items-center justify-center mb-8 rotate-3">
+          <span class="material-symbols-outlined text-4xl text-on-surface" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+        </div>
+        <h3 class="font-headline font-black text-3xl mb-4 uppercase">The Game Board</h3>
+        <p class="text-on-surface-variant font-medium text-lg">A dynamic canvas where your squad selects games, votes on modifiers, and tracks real-time power-ups.</p>
+      </div>
+
+      <!-- Medium Feature -->
+      <div class="bg-secondary-container p-10 border-4 border-on-surface sticker-shadow rotate-1 hover:rotate-0 transition-transform">
+        <div class="w-16 h-16 bg-surface-container-lowest border-2 border-on-surface flex items-center justify-center mb-8 -rotate-6">
+          <span class="material-symbols-outlined text-4xl text-on-surface" style="font-variation-settings: 'FILL' 1;">stadium</span>
+        </div>
+        <h3 class="font-headline font-black text-3xl mb-4 uppercase">Live Arenas</h3>
+        <p class="text-on-secondary-container font-medium text-lg">Drop into ongoing matches and spectate with live reactions.</p>
+      </div>
+
+      <!-- Image Feature -->
+      <div class="bg-tertiary border-4 border-on-surface sticker-shadow overflow-hidden relative group flex items-end p-8 min-h-[200px]">
+        <div class="absolute inset-0 bg-tertiary opacity-80"></div>
+        <h3 class="relative font-headline font-black text-2xl text-white uppercase italic">Pro League</h3>
+      </div>
+
+      <!-- Small Feature -->
+      <div class="bg-surface-container-lowest p-8 border-4 border-on-surface sticker-shadow -rotate-2 hover:rotate-0 transition-transform">
+        <span class="material-symbols-outlined text-primary text-5xl mb-4 block">rocket_launch</span>
+        <h4 class="font-headline font-black text-xl mb-2 uppercase">Instant Boot</h4>
+        <p class="text-sm font-medium text-on-surface-variant">Zero loading screens. Jump straight into the action.</p>
+      </div>
+
+      <!-- CTA Feature -->
+      <div class="lg:col-span-2 bg-primary-container p-8 border-4 border-on-surface sticker-shadow flex flex-col lg:flex-row gap-8 items-center">
+        <div class="flex-1">
+          <h4 class="font-headline font-black text-3xl mb-2 uppercase text-on-surface italic">Join the Squad Alpha</h4>
+          <p class="text-on-surface font-medium">Be the first to test new legendary skins and exclusive arcade maps.</p>
+        </div>
+        <%= link_to "Recruit Member", new_session_path, class: "bg-on-surface text-surface px-6 py-3 font-headline font-black uppercase border-2 border-on-surface sticker-shadow whitespace-nowrap" %>
+      </div>
+
+      <!-- Rank Feature -->
+      <div class="bg-surface-container-lowest p-8 border-4 border-on-surface sticker-shadow rotate-1 hover:rotate-0 transition-transform flex flex-col items-center text-center justify-center">
+        <span class="material-symbols-outlined text-secondary text-6xl mb-4" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+        <h4 class="font-headline font-black text-xl mb-2 uppercase">Rank: Gold Tier</h4>
+        <p class="text-xs font-bold tracking-widest text-on-surface-variant">SQUAD ALPHA PERFORMANCE</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-32 px-6 bg-surface text-center relative overflow-hidden">
+    <div class="max-w-4xl mx-auto relative z-10">
+      <h2 class="font-headline font-black text-6xl lg:text-8xl text-on-surface mb-8 uppercase tracking-tighter leading-none">
+        Insert Coin to <br/><span class="text-primary italic">Keep Playing.</span>
+      </h2>
+      <p class="text-2xl text-on-surface-variant mb-12 font-medium">The arcade closes when you do. Bring your friends, build your legacy.</p>
+      <%= link_to "Start Your Squad", new_session_path, class: "inline-block bg-primary text-on-primary px-12 py-6 text-2xl font-headline font-black uppercase tracking-tighter border-4 border-on-surface sticker-shadow sticker-shadow-hover transition-all active:scale-95" %>
+    </div>
+    <div class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 w-96 h-96 bg-tertiary opacity-5 rounded-full blur-3xl"></div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface border-t-4 border-on-surface py-12 px-8">
+  <div class="flex flex-col items-center gap-6 max-w-7xl mx-auto">
+    <span class="text-lg font-bold text-secondary font-headline tracking-tighter uppercase">HERD ARCADE</span>
+    <div class="flex flex-wrap justify-center gap-8">
+      <a href="#" class="font-body text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Support</a>
+      <a href="#" class="font-body text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Privacy</a>
+      <a href="#" class="font-body text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Arcade Map</a>
+      <a href="#" class="font-body text-xs font-medium uppercase tracking-widest text-on-surface hover:text-tertiary transition-colors">Discord</a>
+    </div>
+    <p class="font-body text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+      &copy; <%= Time.current.year %> HERD ARCADE. INSERT COIN TO CONTINUE.
+    </p>
+  </div>
+</footer>

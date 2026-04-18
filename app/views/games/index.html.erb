@@ -1,0 +1,155 @@
+<style>
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, #dcdddd 1px, transparent 1px);
+  }
+  .sticker-rotate { transform: rotate(-1.5deg); }
+  .sticker-rotate-alt { transform: rotate(1deg); }
+  .bouncy-hover { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .bouncy-hover:hover { transform: scale(1.02) translateY(-4px) rotate(0deg); }
+</style>
+
+<div class="bg-grid min-h-screen pb-32 md:pb-0">
+  <main class="pt-12 px-6 md:px-12 max-w-7xl mx-auto">
+
+    <!-- Hero Header -->
+    <header class="mb-16">
+      <h1 class="font-headline text-6xl md:text-8xl font-black text-on-surface tracking-tight uppercase">
+        Arcade <span class="text-primary italic">Lobby</span>
+      </h1>
+      <p class="text-on-surface-variant max-w-xl text-lg mt-4 font-medium leading-relaxed">
+        Step into the Herd ecosystem. Join live rooms, climb the ranks, and dominate the pixel-grid.
+      </p>
+    </header>
+
+    <!-- Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+      <% if @games.any? %>
+        <% @games.each_with_index do |game, index| %>
+
+          <% if index == 0 %>
+            <!-- Featured Game Card (large) -->
+            <div class="md:col-span-2 lg:col-span-2 flex flex-col bg-surface-container-lowest border-4 border-on-surface p-6 sticker-rotate bouncy-hover relative group overflow-hidden">
+              <div class="absolute top-4 right-4 bg-secondary-container text-on-secondary-fixed font-headline font-black px-4 py-1 border-2 border-on-surface -rotate-3 z-10 text-sm tracking-widest">
+                LIVE NOW
+              </div>
+              <div class="h-64 mb-6 border-4 border-on-surface overflow-hidden relative bg-tertiary flex items-center justify-center">
+                <span class="material-symbols-outlined text-white opacity-30" style="font-size: 120px; font-variation-settings: 'FILL' 1;">edit_note</span>
+                <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-6">
+                  <div class="flex gap-4 items-center">
+                    <span class="material-symbols-outlined text-white text-5xl">edit_note</span>
+                    <h2 class="font-headline text-5xl font-black text-white tracking-tighter uppercase italic"><%= game.name %></h2>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-1 flex flex-col justify-between">
+                <div>
+                  <p class="text-on-surface font-bold text-lg leading-snug">
+                    <%= game.config["description"] || "The classic drawing & guessing game reimagined for the Herd. Grab your pen and start sketching." %>
+                  </p>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">Multiplayer</span>
+                    <span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">Drawing</span>
+                  </div>
+                </div>
+                <div class="mt-8">
+                  <%= link_to game_path(game), class: "w-full block bg-primary text-on-primary font-headline text-2xl font-black py-4 border-4 border-on-primary-container shadow-[4px_4px_0px_#4c0600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center gap-3" do %>
+                    <span class="material-symbols-outlined font-black">play_arrow</span>
+                    PLAY NOW
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+          <% else %>
+            <!-- Other active games (smaller cards) -->
+            <div class="flex flex-col bg-surface-container-lowest border-4 border-on-surface p-6 sticker-rotate-alt bouncy-hover relative group overflow-hidden">
+              <div class="h-48 mb-6 border-4 border-on-surface overflow-hidden relative bg-tertiary flex items-center justify-center">
+                <span class="material-symbols-outlined text-white opacity-30" style="font-size: 80px; font-variation-settings: 'FILL' 1;">videogame_asset</span>
+                <div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex items-end p-4">
+                  <h3 class="font-headline text-3xl font-black text-white tracking-tighter uppercase italic"><%= game.name %></h3>
+                </div>
+              </div>
+              <div class="flex-1 flex flex-col justify-between">
+                <p class="text-on-surface font-bold text-sm leading-snug">
+                  <%= game.config["description"] || "A fun multiplayer game for your squad." %>
+                </p>
+                <div class="mt-6">
+                  <%= link_to "PLAY NOW", game_path(game), class: "w-full block text-center bg-primary text-on-primary font-headline font-black py-3 border-4 border-on-surface shadow-[4px_4px_0px_#4c0600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest text-sm" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        <% end %>
+      <% end %>
+
+      <!-- Coming Soon Cards (always shown) -->
+      <div class="flex flex-col bg-surface-container-low border-4 border-outline-variant border-dotted p-6 sticker-rotate-alt grayscale opacity-80">
+        <div class="h-48 mb-6 bg-surface-container-high flex items-center justify-center border-4 border-outline-variant border-dotted">
+          <span class="material-symbols-outlined text-7xl text-outline-variant">videogame_asset</span>
+        </div>
+        <div class="flex-1">
+          <span class="text-xs font-black uppercase tracking-[0.2em] text-outline-variant">Upcoming Arcade Hit</span>
+          <h3 class="font-headline text-3xl font-black text-outline-variant mt-2 uppercase">LOCKED</h3>
+          <p class="text-outline-variant text-sm mt-2 font-medium">A high-octane challenge is currently under construction. Stay tuned.</p>
+        </div>
+        <div class="mt-6">
+          <div class="w-full h-12 border-4 border-outline-variant border-dotted flex items-center justify-center text-outline-variant font-black text-sm">
+            COMING SOON
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col bg-surface-container-low border-4 border-outline-variant border-dotted p-6 sticker-rotate grayscale opacity-80">
+        <div class="h-48 mb-6 bg-surface-container-high flex items-center justify-center border-4 border-outline-variant border-dotted">
+          <span class="material-symbols-outlined text-7xl text-outline-variant">playing_cards</span>
+        </div>
+        <div class="flex-1">
+          <span class="text-xs font-black uppercase tracking-[0.2em] text-outline-variant">New Expansion</span>
+          <h3 class="font-headline text-3xl font-black text-outline-variant mt-2 uppercase">LOCKED</h3>
+          <p class="text-outline-variant text-sm mt-2 font-medium">Strategic deck-building combat. Only the strongest herds will survive.</p>
+        </div>
+        <div class="mt-6">
+          <div class="w-full h-12 border-4 border-outline-variant border-dotted flex items-center justify-center text-outline-variant font-black text-sm">
+            COMING SOON
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 lg:col-span-1 flex flex-col bg-surface-container-low border-4 border-outline-variant border-dotted p-6 sticker-rotate-alt grayscale opacity-80">
+        <div class="h-48 mb-6 bg-surface-container-high flex items-center justify-center border-4 border-outline-variant border-dotted">
+          <span class="material-symbols-outlined text-7xl text-outline-variant">help_center</span>
+        </div>
+        <div class="flex-1">
+          <span class="text-xs font-black uppercase tracking-[0.2em] text-outline-variant">Secret Project</span>
+          <h3 class="font-headline text-3xl font-black text-outline-variant mt-2 uppercase">LOCKED</h3>
+          <p class="text-outline-variant text-sm mt-2 font-medium">A social deduction experience that will test your squad's loyalty.</p>
+        </div>
+        <div class="mt-6">
+          <div class="w-full h-12 border-4 border-outline-variant border-dotted flex items-center justify-center text-outline-variant font-black text-sm">
+            COMING SOON
+          </div>
+        </div>
+      </div>
+
+      <!-- Squad Tournaments Banner -->
+      <div class="lg:col-span-2 bg-tertiary text-on-tertiary p-8 flex flex-col justify-between border-4 border-on-surface sticker-rotate bouncy-hover overflow-hidden relative">
+        <div class="absolute -bottom-10 -right-10 opacity-20 transform rotate-12">
+          <span class="material-symbols-outlined" style="font-size: 15rem;">groups</span>
+        </div>
+        <div>
+          <h3 class="font-headline text-4xl font-black uppercase tracking-tighter italic">Squad Tournaments</h3>
+          <p class="text-on-tertiary/90 text-lg font-medium mt-4 max-w-md">Weekly challenges where your squad can compete for legendary ranking badges.</p>
+        </div>
+        <div class="mt-12 flex gap-4">
+          <button class="bg-secondary-container text-on-secondary-fixed font-headline font-black px-6 py-3 border-4 border-on-surface shadow-[4px_4px_0px_#423500] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all uppercase tracking-widest text-sm">
+            COMING SOON
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
