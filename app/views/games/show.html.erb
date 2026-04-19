@@ -162,9 +162,11 @@
       <div class="bg-primary text-on-primary p-10 sticker-border neo-shadow rotate-1">
         <h2 class="font-headline text-4xl font-black mb-2">Ready to Draw?</h2>
         <p class="text-on-primary/80 mb-8">Host your own lobby and invite friends for a custom match.</p>
-        <button class="w-full bg-surface-container-lowest text-primary py-5 font-headline font-black text-2xl sticker-border neo-shadow back-out-hover back-out-active transition-all mb-4">
-          CREATE ROOM
-        </button>
+        <%= button_to "CREATE ROOM", rooms_path,
+          params: { game_id: @game.id },
+          method: :post,
+          class: "w-full bg-surface-container-lowest text-primary py-5 font-headline font-black text-2xl sticker-border neo-shadow back-out-hover back-out-active transition-all mb-4"
+        %>
       </div>
       <div class="bg-tertiary-container p-8 sticker-border neo-shadow">
         <h3 class="font-headline text-2xl font-black mb-4 uppercase">Join a Room</h3>

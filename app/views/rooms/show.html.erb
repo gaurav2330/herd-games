@@ -1,0 +1,198 @@
+<style>
+  .sticker-shadow { box-shadow: 6px 6px 0px 0px rgba(45, 47, 47, 1); }
+  .sticker-shadow-hover:hover { box-shadow: 8px 8px 0px 0px rgba(45, 47, 47, 1); transform: translate(-2px, -2px); }
+  .active-press:active { box-shadow: 0px 0px 0px 0px rgba(45, 47, 47, 1); transform: translate(6px, 6px); }
+  body { background-image: radial-gradient(#dcdddd 1.5px, transparent 1.5px); background-size: 24px 24px; }
+</style>
+
+<main class="flex-grow container mx-auto px-4 py-12 max-w-7xl">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+    <!-- LEFT COLUMN: Room Config -->
+    <section class="lg:col-span-7 flex flex-col gap-8">
+
+      <!-- Room Code Card -->
+      <div class="bg-surface-container-lowest border-4 border-on-surface sticker-shadow p-8 flex flex-col gap-6 -rotate-1">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <span class="font-headline text-sm font-black uppercase text-tertiary tracking-widest">Lobby Room Code</span>
+            <h1 class="font-headline text-7xl md:text-8xl font-black text-on-surface tracking-tighter"><%= @room.code %></h1>
+          </div>
+          <div class="flex gap-3">
+            <button onclick="navigator.clipboard.writeText('<%= @room.code %>')"
+              class="bg-secondary-container text-on-secondary-container border-4 border-on-surface px-6 py-3 font-headline font-bold uppercase sticker-shadow-hover active-press transition-all flex items-center gap-2">
+              <span class="material-symbols-outlined">content_copy</span>
+              COPY CODE
+            </button>
+            <button onclick="navigator.clipboard.writeText('<%= join_room_by_code_url(code: @room.code) %>')"
+              class="bg-surface-container-high text-on-surface border-4 border-on-surface px-6 py-3 font-headline font-bold uppercase sticker-shadow-hover active-press transition-all flex items-center gap-2">
+              <span class="material-symbols-outlined">share</span>
+              COPY LINK
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Config Fields -->
+      <div class="bg-surface-container border-4 border-on-surface p-8 flex flex-col gap-8">
+        <div class="flex items-center gap-4">
+          <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">tune</span>
+          <h2 class="font-headline text-3xl font-black uppercase tracking-tight">Room Configuration</h2>
+        </div>
+
+        <% if current_user == @room.admin %>
+          <%# Admin sees editable form %>
+          <%= form_with model: @room, method: :patch, class: "grid grid-cols-1 md:grid-cols-2 gap-6" do |f| %>
+
+            <div class="flex flex-col gap-2">
+              <label class="font-headline font-bold text-sm uppercase text-on-surface-variant">Rounds</label>
+              <select name="room[config][rounds]" class="w-full bg-surface-container-lowest border-4 border-on-surface p-4 font-headline font-bold text-xl focus:ring-0 focus:border-primary">
+                <% [5, 8, 10, 15].each do |r| %>
+                  <option value="<%= r %>" <%= "selected" if @room.config["rounds"].to_i == r %>><%= r %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="font-headline font-bold text-sm uppercase text-on-surface-variant">Time Per Turn (seconds)</label>
+              <div class="flex items-center gap-4 bg-surface-container-lowest border-4 border-on-surface p-4">
+                <input name="room[config][turn_duration]" type="number" value="<%= @room.config["turn_duration"] || 80 %>"
+                  class="w-full bg-transparent border-none p-0 font-headline font-bold text-xl focus:ring-0"/>
+                <span class="font-headline font-bold text-lg text-primary">SEC</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="font-headline font-bold text-sm uppercase text-on-surface-variant">Word Options</label>
+              <div class="flex gap-2">
+                <% [2, 3, 4].each do |w| %>
+                  <label class="flex-1">
+                    <input type="radio" name="room[config][word_options]" value="<%= w %>" class="hidden peer" <%= "checked" if @room.config["word_options"].to_i == w %>>
+                    <div class="peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary border-4 border-on-surface py-3 font-headline font-bold text-center cursor-pointer"><%= w %></div>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="font-headline font-bold text-sm uppercase text-on-surface-variant">
+                Word Selection Time: <span id="selection-time-val"><%= @room.config["word_selection_duration"] || 10 %>s</span>
+              </label>
+              <input type="range" name="room[config][word_selection_duration]"
+                min="5" max="30" value="<%= @room.config["word_selection_duration"] || 10 %>"
+                class="w-full h-8 accent-tertiary"
+                oninput="document.getElementById('selection-time-val').textContent = this.value + 's'"/>
+              <div class="flex justify-between font-headline font-bold text-tertiary">
+                <span>5s</span>
+                <span>10s</span>
+                <span>30s</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 md:col-span-2">
+              <label class="font-headline font-bold text-sm uppercase text-on-surface-variant">Max Players</label>
+              <div class="flex items-center justify-between bg-surface-container-lowest border-4 border-on-surface p-1">
+                <button type="button" onclick="let i=document.getElementById('max-players'); if(i.value>2) i.value--"
+                  class="w-14 h-14 flex items-center justify-center bg-surface-container-high hover:bg-surface-variant transition-colors">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+                <input type="number" id="max-players" name="room[config][max_players]"
+                  value="<%= @room.config["max_players"] || 10 %>"
+                  min="2" max="10"
+                  class="font-headline text-3xl font-black text-center border-none bg-transparent focus:ring-0 w-16"/>
+                <button type="button" onclick="let i=document.getElementById('max-players'); if(i.value<10) i.value++"
+                  class="w-14 h-14 flex items-center justify-center bg-surface-container-high hover:bg-surface-variant transition-colors">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="md:col-span-2">
+              <%= f.submit "Save Config", class: "w-full bg-surface-container-high text-on-surface border-4 border-on-surface py-3 font-headline font-bold uppercase cursor-pointer hover:bg-surface-variant transition-colors" %>
+            </div>
+
+          <% end %>
+
+        <% else %>
+          <%# Non-admin sees read-only config %>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <% [
+              ["Rounds", @room.config["rounds"] || 8],
+              ["Turn Duration", "#{@room.config["turn_duration"] || 80}s"],
+              ["Word Options", @room.config["word_options"] || 3],
+              ["Selection Time", "#{@room.config["word_selection_duration"] || 10}s"],
+              ["Max Players", @room.config["max_players"] || 10]
+            ].each do |label, value| %>
+              <div class="bg-surface-container-lowest border-4 border-on-surface p-4 flex flex-col items-center text-center">
+                <span class="font-headline font-black text-2xl"><%= value %></span>
+                <span class="text-xs font-bold uppercase text-on-surface-variant tracking-widest mt-1"><%= label %></span>
+              </div>
+            <% end %>
+          </div>
+          <p class="text-center text-on-surface-variant font-bold uppercase text-sm">Waiting for host to configure the room...</p>
+        <% end %>
+
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: Players Panel -->
+    <aside class="lg:col-span-5 flex flex-col gap-6 sticky top-28">
+
+      <div class="bg-tertiary text-white border-4 border-on-surface sticker-shadow p-6 rotate-1">
+        <div class="flex items-center justify-between">
+          <h2 class="font-headline text-2xl font-black uppercase tracking-tight">Players in Room</h2>
+          <span class="bg-on-surface text-white px-3 py-1 font-headline font-black text-xl">
+            <%= @room.room_memberships.count %>/<%= @room.config["max_players"] || 10 %>
+          </span>
+        </div>
+      </div>
+
+      <%= turbo_stream_from @room %>
+
+      <div id="players_list" class="flex flex-col gap-4">
+        <%= render "rooms/players_list", room: @room %>
+      </div>
+
+      <!-- Lobby Chat -->
+      <div class="flex flex-col gap-2 mt-4">
+        <div class="bg-surface-container border-4 border-on-surface h-48 overflow-y-auto p-4 font-body text-sm flex flex-col gap-2">
+          <div class="p-2 bg-surface-container-high border-l-4 border-tertiary">
+            <span class="font-bold text-tertiary">SYSTEM:</span> Welcome to the lobby!
+          </div>
+        </div>
+        <div class="flex border-4 border-on-surface">
+          <input type="text" placeholder="Type a message..."
+            class="flex-grow p-4 bg-surface-container-lowest border-none focus:ring-0 font-body"/>
+          <button class="bg-on-surface text-white px-6 font-headline font-black uppercase">SEND</button>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- BOTTOM: Start Game -->
+  <div class="mt-16 flex flex-col items-center gap-6">
+    <% if current_user == @room.admin %>
+      <% if @room.room_memberships.count >= 2 %>
+        <button class="bg-primary text-white border-4 border-on-surface px-12 py-6 text-4xl font-headline font-black uppercase tracking-widest sticker-shadow-hover active-press transition-all flex items-center gap-4 group">
+          <span class="material-symbols-outlined text-5xl group-hover:rotate-12 transition-transform" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+          START GAME
+        </button>
+      <% else %>
+        <button disabled class="bg-surface-container-high text-on-surface-variant border-4 border-outline-variant px-12 py-6 text-4xl font-headline font-black uppercase tracking-widest cursor-not-allowed flex items-center gap-4">
+          <span class="material-symbols-outlined text-5xl">play_arrow</span>
+          START GAME
+        </button>
+        <div class="bg-on-surface text-secondary-container px-4 py-1 font-headline font-bold text-sm flex items-center gap-2 -rotate-1">
+          <span class="material-symbols-outlined text-sm">info</span>
+          Minimum 2 players required
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-surface-container border-4 border-on-surface px-8 py-4 font-headline font-bold text-xl uppercase text-on-surface-variant">
+        Waiting for host to start the game...
+      </div>
+    <% end %>
+  </div>
+
+</main>

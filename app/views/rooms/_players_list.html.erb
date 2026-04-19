@@ -1,0 +1,27 @@
+<% room.room_memberships.includes(:user).each do |membership| %>
+  <div class="bg-surface-container-lowest border-4 border-on-surface p-4 flex items-center justify-between hover:scale-[1.02] transition-transform">
+    <div class="flex items-center gap-4">
+      <div class="w-16 h-16 bg-primary-container border-4 border-on-surface flex items-center justify-center text-4xl font-headline font-black text-on-primary-container rotate-2">
+        <%= membership.user.username&.first&.upcase %>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-headline text-xl font-bold uppercase tracking-tight"><%= membership.user.username %></span>
+        <% if membership.user == room.admin %>
+          <span class="bg-primary text-on-primary text-[10px] font-black w-fit px-2 py-0.5 uppercase mt-1">HOST</span>
+        <% end %>
+      </div>
+    </div>
+    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">stars</span>
+  </div>
+<% end %>
+
+<%# Empty slots %>
+<% remaining = (room.config["max_players"] || 10).to_i - room.room_memberships.count %>
+<% [remaining, 2].min.times do %>
+  <div class="border-4 border-dashed border-outline-variant p-4 flex items-center gap-4 opacity-50">
+    <div class="w-16 h-16 border-4 border-dashed border-outline-variant flex items-center justify-center">
+      <span class="material-symbols-outlined text-outline-variant">person_add</span>
+    </div>
+    <span class="font-headline text-xl font-bold uppercase tracking-tight italic text-outline-variant">Waiting for player...</span>
+  </div>
+<% end %>

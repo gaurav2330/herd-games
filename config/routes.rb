@@ -13,12 +13,10 @@ Rails.application.routes.draw do
     resources :squad_memberships, only: [:create, :destroy]
   end
   
-  resources :rooms, only: [:new, :create, :show] do
-    collection do
-      get 'join/:code', to: 'rooms#join'
-    end
+  resources :rooms, only: [:new, :create, :show, :update] do
     resources :room_memberships, only: [:create]
   end
+  get 'rooms/join/:code', to: 'rooms#join', as: 'join_room_by_code'
   
   resources :games, only: [:index, :show]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
