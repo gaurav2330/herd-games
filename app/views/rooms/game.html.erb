@@ -1,0 +1,146 @@
+<style>
+  .canvas-shadow { box-shadow: 8px 8px 0px 0px #2d2f2f; }
+  .sticker-card { box-shadow: 4px 4px 0px 0px #2d2f2f; }
+  .pressed-state:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px #2d2f2f; }
+</style>
+
+<%= turbo_stream_from @room %>
+
+<div class="flex flex-col h-screen bg-surface text-on-surface overflow-hidden pt-20" id="game-container">
+
+  <!-- Top Bar -->
+  <header class="flex justify-between items-center w-full px-6 py-3 bg-surface border-b-4 border-on-surface shadow-[0_4px_0_0_rgba(45,47,47,1)] z-50 shrink-0">
+    <div class="flex items-center gap-8">
+      <%= link_to "HERD", root_path, class: "text-2xl font-black text-primary italic uppercase font-headline tracking-tighter" %>
+      <div class="hidden md:flex flex-col">
+        <span class="font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant">
+          Round <%= @current_round&.round_number || 1 %> of <%= @room.config["rounds"] || 8 %>
+        </span>
+        <span class="font-headline font-bold text-sm text-on-surface">
+          <% if @is_drawer %>
+            You are drawing!
+          <% else %>
+            <%= @current_turn&.user&.username || "Someone" %> is drawing...
+          <% end %>
+        </span>
+      </div>
+    </div>
+
+    <!-- Timer + Word display -->
+    <div class="flex items-center gap-6">
+      <div class="flex flex-col items-end">
+        <span id="game-timer" class="text-primary font-headline font-black text-3xl leading-none">
+          <%= @room.config["turn_duration"] || 80 %>
+        </span>
+        <span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">seconds</span>
+      </div>
+      <div class="h-10 w-1 bg-on-surface"></div>
+      <div class="flex flex-col items-center" id="word-display">
+        <% if @current_turn&.status == "selecting" %>
+          <span class="font-headline font-bold text-lg text-on-surface-variant animate-pulse">Selecting word...</span>
+        <% elsif @is_drawer %>
+          <span class="font-headline font-black text-2xl tracking-widest uppercase text-primary">
+            <%= @current_turn&.word %>
+          </span>
+          <span class="text-xs font-bold uppercase text-on-surface-variant">your word</span>
+        <% else %>
+          <span class="font-headline font-black text-2xl tracking-[0.4rem] text-on-surface">
+            <%= @current_turn&.word&.gsub(/[a-zA-Z]/, "_ ")&.strip || "_ _ _ _ _" %>
+          </span>
+          <span class="text-xs font-bold uppercase text-on-surface-variant"><%= @current_turn&.word&.length %> letters</span>
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Area -->
+  <div class="flex flex-1 overflow-hidden p-4 gap-4">
+
+    <!-- LEFT: Scoreboard -->
+    <aside class="hidden lg:flex flex-col w-64 bg-surface border-4 border-on-surface sticker-card overflow-hidden shrink-0">
+      <div class="p-4 bg-on-surface text-surface flex justify-between items-center">
+        <div>
+          <h2 class="font-headline font-black text-lg uppercase leading-none">Scoreboard</h2>
+          <p class="text-xs opacity-70 uppercase tracking-tighter mt-1">Round <%= @current_round&.round_number %></p>
+        </div>
+        <span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">stars</span>
+      </div>
+      <div id="scoreboard" class="flex-1 overflow-y-auto p-2 space-y-2">
+        <% @room.room_memberships.includes(:user).each do |membership| %>
+          <div class="flex items-center gap-3 p-3 border-2 border-on-surface sticker-card
+            <%= membership.user == @current_turn&.user ? 'bg-secondary text-on-secondary scale-105 rotate-1' : 'bg-surface' %>">
+            <div class="w-10 h-10 border-2 <%= membership.user == @current_turn&.user ? 'border-white' : 'border-on-surface' %> flex items-center justify-center font-headline font-black text-lg
+              <%= membership.user == @current_turn&.user ? 'bg-secondary-container text-on-secondary-container' : 'bg-primary-container text-on-primary-container' %>">
+              <%= membership.user.username&.first&.upcase %>
+            </div>
+            <div class="flex-1">
+              <p class="font-headline font-bold text-sm leading-tight">
+                <%= membership.user == current_user ? "YOU: #{membership.user.username}" : membership.user.username %>
+              </p>
+              <p class="text-xs font-bold opacity-70">0 pts</p>
+            </div>
+            <% if membership.user == @current_turn&.user %>
+              <span class="material-symbols-outlined animate-pulse" style="font-variation-settings: 'FILL' 1;">brush</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </aside>
+
+    <!-- CENTER: Dynamic game content -->
+    <section class="flex-1 flex flex-col gap-4 overflow-hidden" id="game-center">
+      <% if @current_turn&.status == "selecting" %>
+        <% if @is_drawer %>
+          <%= render "rooms/word_selection", turn: @current_turn, room: @room %>
+        <% else %>
+          <%= render "rooms/waiting_for_word", turn: @current_turn, room: @room %>
+        <% end %>
+      <% else %>
+        <%= render "rooms/drawing_phase", turn: @current_turn, is_drawer: @is_drawer %>
+      <% end %>
+    </section>
+
+    <!-- RIGHT: Chat -->
+    <section class="w-72 flex flex-col bg-surface-container-lowest border-4 border-on-surface sticker-card overflow-hidden shrink-0">
+      <div class="p-3 bg-tertiary text-on-tertiary font-headline font-black uppercase text-sm tracking-widest flex items-center gap-2">
+        <span class="material-symbols-outlined">chat</span>
+        Chat & Guesses
+      </div>
+
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-3 space-y-2 font-body text-sm">
+        <div class="text-center">
+          <span class="inline-block px-3 py-1 bg-surface-container text-xs font-bold text-on-surface-variant uppercase">
+            Round <%= @current_round&.round_number %> started
+          </span>
+        </div>
+      </div>
+
+      <!-- Chat input -->
+      <div class="p-3 bg-surface-container border-t-4 border-on-surface">
+        <% if @current_turn&.status == "selecting" %>
+          <div class="w-full p-3 bg-surface border-4 border-outline-variant text-on-surface-variant font-bold text-center text-sm uppercase opacity-60">
+            <span class="material-symbols-outlined text-sm align-middle">lock</span>
+            Wait for drawing to start
+          </div>
+        <% elsif @is_drawer %>
+          <div class="w-full p-3 bg-surface border-4 border-on-surface text-on-surface-variant font-bold text-center text-sm uppercase">
+            You are drawing — no guessing!
+          </div>
+        <% else %>
+          <div class="relative">
+            <input type="text"
+              id="guess-input"
+              placeholder="Type your guess..."
+              autocomplete="off"
+              class="w-full bg-white border-4 border-on-surface p-3 pr-12 font-bold focus:ring-0 focus:outline-none focus:border-tertiary transition-all sticker-card"/>
+            <button id="send-guess"
+              class="absolute right-2 top-2 h-10 w-10 flex items-center justify-center bg-tertiary text-on-tertiary border-2 border-on-surface pressed-state">
+              <span class="material-symbols-outlined">send</span>
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+  </div>
+</div>

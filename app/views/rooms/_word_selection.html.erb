@@ -1,0 +1,35 @@
+<div class="flex-1 flex flex-col gap-6">
+  <div class="text-center">
+    <h2 class="text-4xl font-headline font-black tracking-tight text-on-surface uppercase">Choose a word...</h2>
+    <p class="text-on-surface-variant font-medium mt-1">
+      Hurry! You have <span id="word-select-timer"><%= room.config["word_selection_duration"] || 10 %></span> seconds
+    </p>
+  </div>
+
+  <!-- Word Cards -->
+  <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center max-w-5xl mx-auto w-full">
+    <% colors = [
+      { bg: "bg-primary", text: "text-on-primary", label: "EASY" },
+      { bg: "bg-secondary", text: "text-on-secondary-fixed", label: "MEDIUM" },
+      { bg: "bg-tertiary", text: "text-on-tertiary", label: "HARD" }
+    ] %>
+    <% rotations = ["-rotate-1", "rotate-1", "-rotate-2"] %>
+    <% heights = ["h-80", "h-96", "h-80"] %>
+
+    <% (turn.word_choices || []).each_with_index do |word, index| %>
+      <% color = colors[index] %>
+      <%= button_to word_room_path(turn.round.room), 
+          method: :patch,
+          params: { word: word },
+          class: "group relative bg-surface-container-lowest border-4 border-on-surface shadow-[8px_8px_0px_0px_#2d2f2f] p-8 flex flex-col items-center justify-center text-center transform #{rotations[index]} hover:rotate-0 transition-transform cursor-pointer #{heights[index]} w-full active:translate-x-1 active:translate-y-1 active:shadow-none" do %>
+        <div class="absolute top-4 right-4 <%= color[:bg] %> <%= color[:text] %> font-black px-2 py-1 text-xs border-4 border-on-surface">
+          <%= color[:label] %>
+        </div>
+        <h3 class="text-4xl font-headline font-extrabold tracking-tighter mb-8 uppercase"><%= word %></h3>
+        <div class="<%= color[:bg] %> <%= color[:text] %> font-headline font-black px-8 py-3 border-4 border-on-surface shadow-[4px_4px_0px_0px_#2d2f2f] group-hover:scale-105 transition-transform uppercase">
+          SELECT
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

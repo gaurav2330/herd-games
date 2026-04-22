@@ -174,10 +174,9 @@
   <div class="mt-16 flex flex-col items-center gap-6">
     <% if current_user == @room.admin %>
       <% if @room.room_memberships.count >= 2 %>
-        <button class="bg-primary text-white border-4 border-on-surface px-12 py-6 text-4xl font-headline font-black uppercase tracking-widest sticker-shadow-hover active-press transition-all flex items-center gap-4 group">
-          <span class="material-symbols-outlined text-5xl group-hover:rotate-12 transition-transform" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-          START GAME
-        </button>
+        <%= button_to "START GAME", start_room_path(@room), 
+        method: :patch,
+        class: "bg-primary text-white border-4 border-on-surface px-12 py-6 text-4xl font-headline font-black uppercase tracking-widest sticker-shadow-hover active-press transition-all flex items-center gap-4" %>
       <% else %>
         <button disabled class="bg-surface-container-high text-on-surface-variant border-4 border-outline-variant px-12 py-6 text-4xl font-headline font-black uppercase tracking-widest cursor-not-allowed flex items-center gap-4">
           <span class="material-symbols-outlined text-5xl">play_arrow</span>
