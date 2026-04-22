@@ -14,6 +14,11 @@ Rails.application.routes.draw do
   end
   
   resources :rooms, only: [:new, :create, :show, :update] do
+    member do
+      patch :start
+      patch :word 
+      get :game
+    end
     resources :room_memberships, only: [:create]
   end
   get 'rooms/join/:code', to: 'rooms#join', as: 'join_room_by_code'

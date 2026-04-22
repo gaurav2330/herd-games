@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_174205) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_22_173748) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -95,9 +95,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_174205) do
     t.datetime "ended_at"
     t.bigint "round_id", null: false
     t.datetime "started_at"
+    t.string "status"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.string "word"
+    t.jsonb "word_choices"
     t.index ["round_id"], name: "index_turns_on_round_id"
     t.index ["user_id"], name: "index_turns_on_user_id"
   end
