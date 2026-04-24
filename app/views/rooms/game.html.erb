@@ -5,6 +5,7 @@
 </style>
 
 <%= turbo_stream_from @room %>
+<%= turbo_stream_from current_user %>
 
 <div class="flex flex-col h-screen bg-surface text-on-surface overflow-hidden pt-20" id="game-container">
 
@@ -29,8 +30,11 @@
     <!-- Timer + Word display -->
     <div class="flex items-center gap-6">
       <div class="flex flex-col items-end">
-        <span id="game-timer" class="text-primary font-headline font-black text-3xl leading-none">
-          <%= @room.config["turn_duration"] || 80 %>
+        <span id="game-timer"
+          data-controller="timer"
+          data-timer-seconds-value="<%= @current_turn&.status == 'selecting' ? (@room.config['word_selection_duration'] || 10) : (@room.config['turn_duration'] || 80) %>"
+          class="text-primary font-headline font-black text-3xl leading-none">
+          <%= @current_turn&.status == 'selecting' ? (@room.config['word_selection_duration'] || 10) : (@room.config['turn_duration'] || 80) %>
         </span>
         <span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest">seconds</span>
       </div>

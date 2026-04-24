@@ -100,16 +100,36 @@ class RoomsController < ApplicationController
     @room = Room.find(params[:id])
     @current_turn = @room.rounds.last.turns.last
     @current_turn.update(word: params[:word], status: "drawing")
-    
+  
     # broadcast to everyone that drawing phase has started
     Turbo::StreamsChannel.broadcast_replace_to(
       @room,
       target: "game-center",
       partial: "rooms/drawing_phase",
-      locals: { turn: @current_turn, is_drawer: false }
+      locals: { turn: @current_turn, is_drawer: false, room: @room }
     )
-    
-    redirect_to game_room_path(@room)
+
+    # broadcast to the drawer
+    Turbo::StreamsChannel.broadcast_replace_to(
+      @current_turn.user,
+      target: "game-center",
+      partial: "rooms/drawing_phase",
+      locals: { turn: @current_turn, is_drawer: true, room: @room }
+    )
+  
+    Turbo::StreamsChannel.broadcast_replace_to(
+      @room,
+      target: "game-timer",
+      html: "<span id='game-timer' data-controller='timer' data-timer-seconds-value='#{@room.config["turn_duration"] || 80}' class='text-primary font-headline font-black text-3xl leading-none'>#{@room.config["turn_duration"] || 80}</span>"
+    )
+
+    Turbo::StreamsChannel.broadcast_update_to(
+      @room,
+      target: "word-display",
+      html: "<span class='font-headline font-black text-2xl tracking-[0.4rem] text-on-surface'>#{@current_turn.word.gsub(/[a-zA-Z]/, '_ ').strip}</span><span class='text-xs font-bold uppercase text-on-surface-variant'>#{@current_turn.word.length} letters</span>"
+    )
+  
+    head :ok
   end
 
   private
