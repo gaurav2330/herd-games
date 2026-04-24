@@ -68,12 +68,15 @@ class RoomsController < ApplicationController
     word_choices = word_list.sample(3)
   
     # create first turn
-    round.turns.create(
+    turn =round.turns.create(
       user: first_drawer,
       word_choices: word_choices,
       status: "selecting",
       started_at: Time.current
     )
+
+    word_selection_duration = @room.config["word_selection_duration"] || 10
+    TurnExpiredJob.set(wait: word_selection_duration.seconds).perform_later(turn.id)
   
     # broadcast redirect to all players
     Turbo::StreamsChannel.broadcast_replace_to(
