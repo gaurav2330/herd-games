@@ -122,6 +122,7 @@
       </div>
       <div class="flex items-center gap-4">
         <% if authenticated? %>
+          <meta name="current-user-id" content="<%= current_user.id %>">
           <span class="font-headline font-bold uppercase text-sm text-on-surface-variant hidden md:block">
             <%= current_user.username&.upcase %>
           </span>

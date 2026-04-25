@@ -12,7 +12,6 @@
   <!-- Top Bar -->
   <header class="flex justify-between items-center w-full px-6 py-3 bg-surface border-b-4 border-on-surface shadow-[0_4px_0_0_rgba(45,47,47,1)] z-50 shrink-0">
     <div class="flex items-center gap-8">
-      <%= link_to "HERD", root_path, class: "text-2xl font-black text-primary italic uppercase font-headline tracking-tighter" %>
       <div class="hidden md:flex flex-col">
         <span class="font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant">
           Round <%= @current_round&.round_number || 1 %> of <%= @room.config["rounds"] || 8 %>
@@ -40,19 +39,7 @@
       </div>
       <div class="h-10 w-1 bg-on-surface"></div>
       <div class="flex flex-col items-center" id="word-display">
-        <% if @current_turn&.status == "selecting" %>
-          <span class="font-headline font-bold text-lg text-on-surface-variant animate-pulse">Selecting word...</span>
-        <% elsif @is_drawer %>
-          <span class="font-headline font-black text-2xl tracking-widest uppercase text-primary">
-            <%= @current_turn&.word %>
-          </span>
-          <span class="text-xs font-bold uppercase text-on-surface-variant">your word</span>
-        <% else %>
-          <span class="font-headline font-black text-2xl tracking-[0.4rem] text-on-surface">
-            <%= @current_turn&.word&.gsub(/[a-zA-Z]/, "_ ")&.strip || "_ _ _ _ _" %>
-          </span>
-          <span class="text-xs font-bold uppercase text-on-surface-variant"><%= @current_turn&.word&.length %> letters</span>
-        <% end %>
+        <span class="font-headline font-bold text-lg text-on-surface-variant animate-pulse">Selecting word...</span>
       </div>
     </div>
   </header>
