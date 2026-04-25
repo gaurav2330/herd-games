@@ -1,1 +1,1 @@
-// Action Cable channels
+// Action Cable channelsimport "channels/game_channel"
