@@ -29,15 +29,17 @@ class RoomsController < ApplicationController
   def join
     @room = Room.find_by(code: params[:code])
     if @room
-      RoomMembership.find_or_create_by(room: @room, user: current_user)
-      puts "Broadcasting update to players list"
+      unless RoomMembership.exists?(room: @room, user: current_user)
+        RoomMembership.create(room: @room, user: current_user)
+      end
+      
       Turbo::StreamsChannel.broadcast_update_to(
         @room,
         target: "players_list",
         partial: "rooms/players_list",
         locals: { room: @room }
       )
-      puts "Update broadcasted"
+      
       redirect_to @room
     else
       redirect_to games_path, alert: "Room not found"
@@ -125,6 +127,21 @@ class RoomsController < ApplicationController
       @room,
       target: "game-timer",
       html: "<span id='game-timer' data-controller='timer' data-timer-seconds-value='#{@room.config["turn_duration"] || 80}' class='text-primary font-headline font-black text-3xl leading-none'>#{@room.config["turn_duration"] || 80}</span>"
+    )
+
+    Turbo::StreamsChannel.broadcast_update_to(
+      @room,
+      target: "chat-input",
+      partial: "rooms/chat_input",
+      locals: { is_drawer: false }
+    )
+
+    # personal stream for drawer
+    Turbo::StreamsChannel.broadcast_update_to(
+      @current_turn.user,
+      target: "chat-input",
+      partial: "rooms/chat_input",
+      locals: { is_drawer: true }
     )
   
     head :ok
