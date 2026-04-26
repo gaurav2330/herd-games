@@ -29,21 +29,32 @@ class RoomsController < ApplicationController
   def join
     @room = Room.find_by(code: params[:code])
     if @room
+      Rails.logger.info "=== JOIN: Found room #{@room.id} for code #{params[:code]}"
+      
       unless RoomMembership.exists?(room: @room, user: current_user)
+        Rails.logger.info "=== JOIN: Creating membership for user #{current_user.id}"
         RoomMembership.create(room: @room, user: current_user)
+        Rails.logger.info "=== JOIN: Membership created"
       end
       
+      Rails.logger.info "=== JOIN: Broadcasting players list"
       Turbo::StreamsChannel.broadcast_update_to(
         @room,
         target: "players_list",
         partial: "rooms/players_list",
         locals: { room: @room }
       )
+      Rails.logger.info "=== JOIN: Broadcast complete, redirecting"
       
       redirect_to @room
     else
+      Rails.logger.error "=== JOIN: Room not found for code #{params[:code]}"
       redirect_to games_path, alert: "Room not found"
     end
+  rescue => e
+    Rails.logger.error "=== JOIN ERROR: #{e.class} - #{e.message}"
+    Rails.logger.error e.backtrace.first(5).join("\n")
+    raise
   end
 
   def start
