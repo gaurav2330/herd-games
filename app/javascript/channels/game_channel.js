@@ -1,15 +1,36 @@
 import consumer from "channels/consumer"
 
-consumer.subscriptions.create("GameChannel", {
-  connected() {
-    // Called when the subscription is ready for use on the server
+const GameChannel = {
+  subscription: null,
+  handlers: {},
+
+  subscribe(roomId){
+    if (this.subscription) return
+
+    this.subscription = consumer.subscriptions.create(
+      { channel: "GameChannel", room_id: roomId },
+      {
+        received: (data)=> {
+          const handler = this.handlers[data.type]
+          if (handler) handler(data)
+        }
+      }
+    )
   },
 
-  disconnected() {
-    // Called when the subscription has been terminated by the server
+  on(type, callback) {
+    this.handlers[type] = callback
   },
 
-  received(data) {
-    // Called when there's incoming data on the websocket for this channel
+  perform(action, data) {
+    this.subscription?.perform(action, data)
+  },
+  
+  unsubscribe() {
+    this.subscription?.unsubscribe()
+    this.subscription = null
+    this.handlers = {}
   }
-});
+}
+
+export default GameChannel

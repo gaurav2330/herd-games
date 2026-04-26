@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import consumer from "channels/consumer"
+import GameChannel from "channels/game_channel"
 
 export default class extends Controller {
   static targets = ["canvas", "toolbar", "drawerWord", "guesserWord"]
@@ -36,9 +36,6 @@ export default class extends Controller {
   }
 
   disconnect() {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
-    }
     clearTimeout(this.throttleTimer)
   }
 
@@ -68,20 +65,11 @@ export default class extends Controller {
   }
 
   subscribeToChannel() {
-    const roomId = this.roomIdValue
-
-    this.subscription = consumer.subscriptions.create(
-      { channel: "GameChannel", room_id: roomId },
-      {
-        received: (data) => {
-          if (data.type === "stroke") {
-            this.drawStroke(data)
-          } else if (data.type === "clear") {
-            this.clearCanvas()
-          }
-        }
-      }
-    )
+    GameChannel.subscribe(this.roomIdValue)
+    GameChannel.on("stroke", (data) => {
+      this.drawStroke(data)
+    })
+    GameChannel.on("clear", () => this.clearCanvas())
   }
 
   setupDrawingEvents() {
@@ -130,7 +118,7 @@ export default class extends Controller {
           canvas_height: this.canvas.height
         })
         this.throttleTimer = null
-      }, 100)
+      }, 50)
     }
 
     this.lastX = pos.x
@@ -159,7 +147,7 @@ export default class extends Controller {
   }
 
   broadcastStroke(data) {
-    this.subscription.perform("draw", data)
+    GameChannel.perform("draw", data)
   }
 
   clearCanvas() {
@@ -167,7 +155,7 @@ export default class extends Controller {
   }
 
   broadcastClear() {
-    this.subscription.perform("draw", {
+    GameChannel.perform("draw", {
       type: "clear",
       room_id: this.roomIdValue
     })

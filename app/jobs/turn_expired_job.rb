@@ -18,5 +18,20 @@ class TurnExpiredJob < ApplicationJob
       partial: "rooms/drawing_phase",
       locals: { turn: turn, is_drawer: false, room: room }
     )
+
+    Turbo::StreamsChannel.broadcast_update_to(
+      @room,
+      target: "chat-input",
+      partial: "rooms/chat_input",
+      locals: { is_drawer: false }
+    )
+
+    # personal stream for drawer
+    Turbo::StreamsChannel.broadcast_update_to(
+      @current_turn.user,
+      target: "chat-input",
+      partial: "rooms/chat_input",
+      locals: { is_drawer: true }
+    )
   end
 end

@@ -1,0 +1,17 @@
+<% if is_drawer %>
+  <div class="w-full p-3 bg-surface border-4 border-on-surface text-on-surface-variant font-bold text-center text-sm uppercase">
+    You are drawing — no guessing!
+  </div>
+<% else %>
+  <div class="relative">
+    <input type="text"
+      id="guess-input"
+      placeholder="Type your guess..."
+      autocomplete="off"
+      class="w-full bg-white border-4 border-on-surface p-3 pr-12 font-bold focus:ring-0 focus:outline-none focus:border-tertiary transition-all sticker-card"/>
+    <button id="send-guess"
+      class="absolute right-2 top-2 h-10 w-10 flex items-center justify-center bg-tertiary text-on-tertiary border-2 border-on-surface pressed-state">
+      <span class="material-symbols-outlined">send</span>
+    </button>
+  </div>
+<% end %>
