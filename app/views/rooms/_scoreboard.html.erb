@@ -1,0 +1,22 @@
+<% room.room_memberships.includes(:user).each do |membership| %>
+  <% user_score = turn.scores.select { |s| s.user_id == membership.user_id }.sum(&:points) %>
+  <div class="flex items-center gap-3 p-3 border-2 border-on-surface sticker-card
+    <%= membership.user == turn.user ? 'bg-secondary text-on-secondary scale-105 rotate-1' : 'bg-surface' %>">
+    <div class="w-10 h-10 border-2 <%= membership.user == turn.user ? 'border-white' : 'border-on-surface' %> flex items-center justify-center font-headline font-black text-lg
+      <%= membership.user == turn.user ? 'bg-secondary-container text-on-secondary-container' : 'bg-primary-container text-on-primary-container' %>">
+      <%= membership.user.username&.first&.upcase %>
+    </div>
+    <div class="flex-1">
+      <p class="font-headline font-bold text-sm leading-tight">
+        <%= membership.user.username %>
+      </p>
+      <p class="text-xs font-bold opacity-70"><%= user_score %> pts</p>
+    </div>
+    <% if membership.user == turn.user %>
+      <span class="material-symbols-outlined animate-pulse" style="font-variation-settings: 'FILL' 1;">brush</span>
+    <% end %>
+    <% if turn.scores.any? { |s| s.user_id == membership.user_id } && membership.user != turn.user %>
+      <span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+    <% end %>
+  </div>
+<% end %>

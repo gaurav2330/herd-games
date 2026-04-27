@@ -107,12 +107,13 @@ class RoomsController < ApplicationController
     @current_round = @room.rounds.last
     @current_turn = @current_round&.turns&.last
     @is_drawer = @current_turn&.user == current_user
+    @current_turn&.scores&.load # eager load scores
   end
 
   def word
     @room = Room.find(params[:id])
     @current_turn = @room.rounds.last.turns.last
-    @current_turn.update(word: params[:word], status: "drawing")
+    @current_turn.update(word: params[:word], status: "drawing", started_at: Time.current)
   
     # broadcast to everyone that drawing phase has started
     Turbo::StreamsChannel.broadcast_replace_to(

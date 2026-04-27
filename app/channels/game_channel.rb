@@ -23,6 +23,26 @@ class GameChannel < ApplicationCable::Channel
     user = User.find_by(id: data["userId"])
 
     result = check_guess(message.downcase, word)
+    if result == "correct"
+      turn_duration = room.config["turn_duration"] || 80
+      time_elapsed = Time.current - turn.started_at
+      remaining_time = turn_duration - time_elapsed
+      points = 500 * (remaining_time / turn_duration)
+
+      Score.create(
+        user: user,
+        scoreable: turn,
+        points: points
+      )
+
+      total_guessers = room.room_memberships.count - 1
+      correct_guessers = turn.scores.count
+
+      if correct_guessers == total_guessers
+        end_turn(turn, room)
+      end
+    end
+
     ActionCable.server.broadcast("game_channel_#{room.id}", {
       type: "chat",
       user: user.username,
@@ -30,9 +50,41 @@ class GameChannel < ApplicationCable::Channel
       message: message,
       status: result
     })
+
+    broadcast_scoreboard(room, turn)
   end
 
   private
+
+  def broadcast_scoreboard(room, turn)
+    Turbo::StreamsChannel.broadcast_update_to(
+      room,
+      target: "scoreboard",
+      partial: "rooms/scoreboard",
+      locals: { room: room, turn: turn }
+    )
+  end
+
+  def end_turn(turn, room)
+    turn.update(status: "updated", ended_at: Time.current)
+
+    total_guessers = room.room_memberships.count - 1
+    correct_guessers = turn.scores.count
+    drawer_points = (500 * (correct_guessers.to_f / total_guessers)).round
+
+    Score.create(
+      user: turn.user,
+      scoreable: turn,
+      points: drawer_points
+    )
+
+    # broadcast turn ended — start next turn
+    Turbo::StreamsChannel.broadcast_replace_to(
+      room,
+      target: "game-center",
+      html: "<section class='flex-1 flex flex-col gap-4 overflow-hidden' id='game-center'><div class='flex-1 flex items-center justify-center font-headline font-black text-4xl uppercase'>Next turn starting...</div></section>"
+    )
+  end
 
   def check_guess(message, word)
     return "correct" if message == word

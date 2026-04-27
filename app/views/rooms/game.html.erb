@@ -57,24 +57,7 @@
         <span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">stars</span>
       </div>
       <div id="scoreboard" class="flex-1 overflow-y-auto p-2 space-y-2">
-        <% @room.room_memberships.includes(:user).each do |membership| %>
-          <div class="flex items-center gap-3 p-3 border-2 border-on-surface sticker-card
-            <%= membership.user == @current_turn&.user ? 'bg-secondary text-on-secondary scale-105 rotate-1' : 'bg-surface' %>">
-            <div class="w-10 h-10 border-2 <%= membership.user == @current_turn&.user ? 'border-white' : 'border-on-surface' %> flex items-center justify-center font-headline font-black text-lg
-              <%= membership.user == @current_turn&.user ? 'bg-secondary-container text-on-secondary-container' : 'bg-primary-container text-on-primary-container' %>">
-              <%= membership.user.username&.first&.upcase %>
-            </div>
-            <div class="flex-1">
-              <p class="font-headline font-bold text-sm leading-tight">
-                <%= membership.user == current_user ? "YOU: #{membership.user.username}" : membership.user.username %>
-              </p>
-              <p class="text-xs font-bold opacity-70">0 pts</p>
-            </div>
-            <% if membership.user == @current_turn&.user %>
-              <span class="material-symbols-outlined animate-pulse" style="font-variation-settings: 'FILL' 1;">brush</span>
-            <% end %>
-          </div>
-        <% end %>
+        <%= render "rooms/scoreboard", room: @room, turn: @current_turn %>
       </div>
     </aside>
 
