@@ -21,24 +21,34 @@ export default class extends Controller {
   }
 
   setupChatInput() {
-    const input = document.getElementById("guess-input")
-    const sendBtn = document.getElementById("send-guess")
-    if (!input || !sendBtn) return
-
-    const send = () => {
-      const message = input.value.trim()
-      if (!message) return
-      GameChannel.perform("chat", {
-        message: message,
-        room_id: this.roomIdValue
-      })
-      input.value = ""
-    }
-
-    sendBtn.addEventListener("click", send)
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") send()
+    // use event delegation on the controller element
+    // works even when input/button are added later via Turbo Stream
+    this.element.addEventListener("click", (e) => {
+      if (e.target.closest("#send-guess")) {
+        this.sendMessage()
+      }
     })
+
+    this.element.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.id === "guess-input") {
+        this.sendMessage()
+      }
+    })
+  }
+
+  sendMessage() {
+    const input = document.getElementById("guess-input")
+    if (!input) return
+    const message = input.value.trim()
+    if (!message) return
+
+    GameChannel.perform("chat", {
+      message: message,
+      room_id: this.roomIdValue,
+      userId: this.currentUserId,
+    })
+
+    input.value = ""
   }
 
   receiveMessage(data) {
@@ -64,9 +74,6 @@ export default class extends Controller {
     chatMessages.appendChild(div)
     chatMessages.scrollTop = chatMessages.scrollHeight
   }
-
-  // at the bottom
-  
 }
 
 window.addEventListener("beforeunload", () => {
