@@ -1,4 +1,4 @@
-class TurnExpiredJob < ApplicationJob
+class WordSelectionExpiredJob < ApplicationJob
   queue_as :default
 
   def perform(turn_id)
