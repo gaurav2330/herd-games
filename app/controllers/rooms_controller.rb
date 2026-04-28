@@ -115,6 +115,10 @@ class RoomsController < ApplicationController
     @current_turn = @room.rounds.last.turns.last
     @current_turn.update(word: params[:word], status: "drawing", started_at: Time.current)
   
+    # enqueue turn end job after turn duration
+    turn_duration = (@room.config["turn_duration"] || 80).to_i
+    TurnExpiredJob.set(wait: turn_duration.seconds).perform_later(@current_turn.id)
+    
     # broadcast to everyone that drawing phase has started
     Turbo::StreamsChannel.broadcast_replace_to(
       @room,
