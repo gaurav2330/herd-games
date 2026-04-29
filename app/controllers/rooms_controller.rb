@@ -72,24 +72,9 @@ class RoomsController < ApplicationController
     # create first round
     round = @room.rounds.create(round_number: 1)
   
-    # pick random drawer
-    # first_drawer = @room.room_memberships.order("RANDOM()").first.user
-    first_drawer = @room.room_memberships.last.user
-  
-    # pick 3 random words from game word list
-    word_list = @room.game.config["word_list"]
-    word_choices = word_list.sample(3)
-  
-    # create first turn
-    turn =round.turns.create(
-      user: first_drawer,
-      word_choices: word_choices,
-      status: "selecting",
-      started_at: Time.current
-    )
+    first_drawer = @room.users_by_join_order.first
 
-    word_selection_duration = @room.config["word_selection_duration"] || 10
-    WordSelectionExpiredJob.set(wait: word_selection_duration.seconds).perform_later(turn.id)
+    round.create_selecting_turn(drawer_user: first_drawer)
   
     # broadcast redirect to all players
     Turbo::StreamsChannel.broadcast_replace_to(

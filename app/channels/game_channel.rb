@@ -66,24 +66,23 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def end_turn(turn, room)
-    turn.update(status: "updated", ended_at: Time.current)
+    turn.update(status: "completed", ended_at: Time.current)
 
     total_guessers = room.room_memberships.count - 1
     correct_guessers = turn.scores.count
-    drawer_points = (500 * (correct_guessers.to_f / total_guessers)).round
 
-    Score.create(
-      user: turn.user,
-      scoreable: turn,
-      points: drawer_points
-    )
+    if total_guessers > 0
+      drawer_points = (500 * (correct_guessers.to_f / total_guessers)).round
+      if drawer_points > 0
+        Score.create(
+          user: turn.user,
+          scoreable: turn,
+          points: drawer_points
+        )
+      end
+    end
 
-    # broadcast turn ended — start next turn
-    Turbo::StreamsChannel.broadcast_replace_to(
-      room,
-      target: "game-center",
-      html: "<section class='flex-1 flex flex-col gap-4 overflow-hidden' id='game-center'><div class='flex-1 flex items-center justify-center font-headline font-black text-4xl uppercase'>Next turn starting...</div></section>"
-    )
+    BroadcastTurnEnded.call(turn, room)
   end
 
   def check_guess(message, word)
