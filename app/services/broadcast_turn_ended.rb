@@ -47,6 +47,24 @@ class BroadcastTurnEnded
       locals: { room: room, turn: turn }
     )
 
-    NextTurnJob.set(wait: 3.seconds).perform_later(room.id, turn.round.id)
+    round = turn.round
+    turns_count = round.turns.count
+    memberships_count = room.room_memberships.count
+    Rails.logger.info(
+      "[BroadcastTurnEnded] room_id=#{room.id} round_id=#{round.id} turn_id=#{turn.id} " \
+      "turns_in_round=#{turns_count} room_memberships=#{memberships_count}"
+    )
+
+    if turns_count == memberships_count
+      Rails.logger.info("[BroadcastTurnEnded] branch=round_complete (counts equal)")
+      Turbo::StreamsChannel.broadcast_replace_to(
+        room,
+        target: "game-center",
+        html: "<div class='flex-1 flex items-center justify-center font-headline font-black text-4xl uppercase'>Round #{round.round_number} complete</div>"
+      )
+    else
+      Rails.logger.info("[BroadcastTurnEnded] branch=next_turn_job")
+      NextTurnJob.set(wait: 3.seconds).perform_later(room.id, round.id)
+    end
   end
 end
