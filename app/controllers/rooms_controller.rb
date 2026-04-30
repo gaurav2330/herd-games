@@ -87,6 +87,9 @@ class RoomsController < ApplicationController
     redirect_to game_room_path(@room)
   end
 
+  def round
+  end
+
   def game
     @room = Room.find(params[:id])
     @current_round = @room.rounds.last
