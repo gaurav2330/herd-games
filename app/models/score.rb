@@ -3,7 +3,7 @@ class Score < ApplicationRecord
   belongs_to :scoreable, polymorphic: true
 
   after_create :update_round_score, if: :turn_score?
-  after_create :update_room_score, if: :round_score?
+  after_save :update_room_score, if: :round_score?
 
   private
 

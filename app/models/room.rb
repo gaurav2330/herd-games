@@ -5,6 +5,7 @@ class Room < ApplicationRecord
   has_many :room_memberships, dependent: :destroy
   has_many :users, through: :room_memberships
   has_many :rounds, dependent: :destroy
+  has_many :scores, as: :scoreable, dependent: :destroy
 
   def users_by_join_order
     room_memberships.includes(:user).order(created_at: :asc, id: :asc).map(&:user)
