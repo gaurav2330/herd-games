@@ -1,11 +1,19 @@
 class GameChannel < ApplicationCable::Channel
   def subscribed
-    room = Room.find(params[:room_id])
-    stream_from "game_channel_#{room.id}"
+    @room = Room.find(params[:room_id])
+    stream_from "game_channel_#{@room.id}"
   end
 
   def unsubscribed
     stop_all_streams
+    return unless @room&.status == "active"
+
+    membership = @room.room_memberships.find_by(user: current_user)
+    membership&.destroy
+
+    if @room.room_memberships.count < 2
+      @room.update(status: "ended")
+    end
   end
 
   def draw(data)
