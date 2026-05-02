@@ -7,6 +7,7 @@ class WordSelectionExpiredJob < ApplicationJob
     return unless turn.status == "selecting"
 
     room = turn.round.room
+    return unless room.status == "active"
     word = turn.word_choices.sample
     turn.update(word: word, status: "drawing", started_at: Time.current)
 

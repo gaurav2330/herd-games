@@ -4,6 +4,7 @@ class NextTurnJob < ApplicationJob
   def perform(room_id, round_id)
     room = Room.find_by(id: room_id)
     return unless room&.status == "active"
+    return unless room.room_memberships.count >= 2
 
     round = Round.find_by(id: round_id)
     return unless round&.room_id == room.id

@@ -5,8 +5,9 @@ class TurnExpiredJob < ApplicationJob
     turn = Turn.find_by(id: turn_id)
     return unless turn
     return unless turn.status == "drawing"
-  
+
     room = turn.round.room
+    return unless room.status == "active"
     turn.update(status: "completed", ended_at: Time.current)
   
     total_guessers = room.room_memberships.count - 1

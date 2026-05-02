@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       patch :word 
       get :game
     end
-    resources :room_memberships, only: [:create]
+    resources :room_memberships, only: [:create, :destroy]
   end
   get 'rooms/join/:code', to: 'rooms#join', as: 'join_room_by_code'
   
