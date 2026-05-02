@@ -15,9 +15,7 @@ export default class extends Controller {
     GameChannel.subscribe(this.roomIdValue)
     GameChannel.on("chat", (data) => this.receiveMessage(data))
 
-    if (!this.isDrawerValue) {
-      this.setupChatInput()
-    }
+    this.setupChatInput()
   }
 
   setupChatInput() {
