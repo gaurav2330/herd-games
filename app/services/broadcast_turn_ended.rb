@@ -55,7 +55,7 @@ class BroadcastTurnEnded
       "turns_in_round=#{turns_count} room_memberships=#{memberships_count}"
     )
 
-    if turns_count == memberships_count
+    if turns_count == memberships_count && round.round_number <= room.config["rounds"]
       Rails.logger.info("[BroadcastTurnEnded] branch=round_complete (counts equal)")
       Turbo::StreamsChannel.broadcast_replace_to(
         room,
