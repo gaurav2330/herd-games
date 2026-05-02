@@ -60,8 +60,9 @@ class BroadcastTurnEnded
       Turbo::StreamsChannel.broadcast_replace_to(
         room,
         target: "game-center",
-        html: "<div class='flex-1 flex items-center justify-center font-headline font-black text-4xl uppercase'>Round #{round.round_number} complete</div>"
+        html: "<section class='flex-1 flex items-center justify-center font-headline font-black text-4xl uppercase' id='game-center'>Round #{round.round_number} complete</section>"
       )
+      NextRoundJob.set(wait: 3.seconds).perform_later(room.id)
     else
       Rails.logger.info("[BroadcastTurnEnded] branch=next_turn_job")
       NextTurnJob.set(wait: 3.seconds).perform_later(room.id, round.id)
