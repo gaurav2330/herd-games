@@ -13,5 +13,6 @@ production:
   connects_to:
     database:
       writing: primary
-  polling_interval: 0.1.seconds
+  polling_interval: 0.5.seconds
+  trim_interval: 30.seconds
   message_retention: 1.day
