@@ -18,7 +18,7 @@ class NextRoundJob < ApplicationJob
   private
 
   def broadcast_selecting_phase(room, turn)
-    word_selection_duration = room.config["word_selection_duration"] || 10
+    word_selection_duration = (room.config["word_selection_duration"] || 10).to_i
 
     Turbo::StreamsChannel.broadcast_replace_to(
       room,

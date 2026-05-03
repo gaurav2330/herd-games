@@ -11,7 +11,7 @@ class WordSelectionExpiredJob < ApplicationJob
     word = turn.word_choices.sample
     turn.update(word: word, status: "drawing", started_at: Time.current)
 
-    turn_duration = room.config["turn_duration"] || 80
+    turn_duration = (room.config["turn_duration"] || 80).to_i
 
     Turbo::StreamsChannel.broadcast_replace_to(
       room,

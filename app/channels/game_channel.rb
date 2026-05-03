@@ -32,7 +32,7 @@ class GameChannel < ApplicationCable::Channel
 
     result = check_guess(message.downcase, word)
     if result == "correct"
-      turn_duration = room.config["turn_duration"] || 80
+      turn_duration = (room.config["turn_duration"] || 80).to_i
       time_elapsed = Time.current - turn.started_at
       remaining_time = turn_duration - time_elapsed
       points = 500 * (remaining_time / turn_duration)

@@ -16,7 +16,7 @@ class Round < ApplicationRecord
     )
     return turn unless turn.persisted?
 
-    word_selection_duration = room.config["word_selection_duration"] || 10
+    word_selection_duration = (room.config["word_selection_duration"] || 10).to_i
     WordSelectionExpiredJob.set(wait: word_selection_duration.seconds).perform_later(turn.id)
 
     turn

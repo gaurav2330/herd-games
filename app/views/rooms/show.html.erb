@@ -46,11 +46,20 @@
 
             <div class="flex flex-col gap-2">
               <label class="font-headline font-bold text-sm uppercase text-on-surface-variant">Rounds</label>
-              <select name="room[config][rounds]" class="w-full bg-surface-container-lowest border-4 border-on-surface p-4 font-headline font-bold text-xl focus:ring-0 focus:border-primary">
-                <% [5, 8, 10, 15].each do |r| %>
-                  <option value="<%= r %>" <%= "selected" if @room.config["rounds"].to_i == r %>><%= r %></option>
-                <% end %>
-              </select>
+              <div class="flex items-center justify-between bg-surface-container-lowest border-4 border-on-surface p-1">
+                <button type="button" onclick="let i=document.getElementById('rounds'); if(i.value>1) i.value--"
+                  class="w-14 h-14 flex items-center justify-center bg-surface-container-high hover:bg-surface-variant transition-colors">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+                <input type="number" id="rounds" name="room[config][rounds]"
+                  value="<%= @room.config["rounds"] || 8 %>"
+                  min="1" max="10"
+                  class="font-headline text-3xl font-black text-center border-none bg-transparent focus:ring-0 w-16"/>
+                <button type="button" onclick="let i=document.getElementById('rounds'); if(i.value<10) i.value++"
+                  class="w-14 h-14 flex items-center justify-center bg-surface-container-high hover:bg-surface-variant transition-colors">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
             </div>
 
             <div class="flex flex-col gap-2">
