@@ -1,5 +1,5 @@
 class WordSelectionExpiredJob < ApplicationJob
-  queue_as :default
+  queue_as :game_critical
 
   def perform(turn_id)
     turn = Turn.find_by(id: turn_id)

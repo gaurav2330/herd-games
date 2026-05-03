@@ -1,5 +1,5 @@
 class NextTurnJob < ApplicationJob
-  queue_as :default
+  queue_as :game_critical
 
   def perform(room_id, round_id)
     room = Room.find_by(id: room_id)
