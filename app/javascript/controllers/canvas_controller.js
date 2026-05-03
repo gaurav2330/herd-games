@@ -19,7 +19,6 @@ export default class extends Controller {
     this.tool = "pencil"
     this.lastX = 0
     this.lastY = 0
-    this.throttleTimer = null
 
     // figure out if current user is drawer from the page
     const currentUserId = parseInt(document.querySelector('meta[name="current-user-id"]')?.content)
@@ -36,7 +35,6 @@ export default class extends Controller {
   }
 
   disconnect() {
-    clearTimeout(this.throttleTimer)
   }
 
   setUpUI() {
@@ -90,36 +88,32 @@ export default class extends Controller {
     if (!this.isDrawing) return
 
     const pos = this.getPosition(e)
+    const nx1 = this.lastX / this.canvas.width
+    const ny1 = this.lastY / this.canvas.height
+    const nx2 = pos.x / this.canvas.width
+    const ny2 = pos.y / this.canvas.height
 
     this.drawStroke({
-      x1: this.lastX,
-      y1: this.lastY,
-      x2: pos.x,
-      y2: pos.y,
+      x1: nx1,
+      y1: ny1,
+      x2: nx2,
+      y2: ny2,
       color: this.currentColor,
       size: this.currentSize,
       tool: this.tool
     })
 
-    // throttle broadcast to every 100ms
-    if (!this.throttleTimer) {
-      this.throttleTimer = setTimeout(() => {
-        this.broadcastStroke({
-          type: "stroke",
-          x1: this.lastX,
-          y1: this.lastY,
-          x2: pos.x,
-          y2: pos.y,
-          color: this.currentColor,
-          size: this.currentSize,
-          tool: this.tool,
-          room_id: this.roomIdValue,
-          canvas_width: this.canvas.width,
-          canvas_height: this.canvas.height
-        })
-        this.throttleTimer = null
-      }, 50)
-    }
+    this.broadcastStroke({
+      type: "stroke",
+      x1: nx1,
+      y1: ny1,
+      x2: nx2,
+      y2: ny2,
+      color: this.currentColor,
+      size: this.currentSize,
+      tool: this.tool,
+      room_id: this.roomIdValue
+    })
 
     this.lastX = pos.x
     this.lastY = pos.y
@@ -132,13 +126,9 @@ export default class extends Controller {
   drawStroke(data) {
     const ctx = this.ctx
 
-    // normalize coordinates to handle different screen sizes
-    const scaleX = this.canvas.width / (data.canvas_width || this.canvas.width)
-    const scaleY = this.canvas.height / (data.canvas_height || this.canvas.height)
-
     ctx.beginPath()
-    ctx.moveTo(data.x1 * scaleX, data.y1 * scaleY)
-    ctx.lineTo(data.x2 * scaleX, data.y2 * scaleY)
+    ctx.moveTo(data.x1 * this.canvas.width, data.y1 * this.canvas.height)
+    ctx.lineTo(data.x2 * this.canvas.width, data.y2 * this.canvas.height)
     ctx.strokeStyle = data.tool === "eraser" ? "#ffffff" : data.color
     ctx.lineWidth = data.size
     ctx.lineCap = "round"
