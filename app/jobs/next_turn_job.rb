@@ -2,15 +2,29 @@ class NextTurnJob < ApplicationJob
   queue_as :game_critical
 
   def perform(room_id, round_id)
+    Rails.logger.info("[NextTurnJob] START room_id=#{room_id} round_id=#{round_id}")
+
     room = Room.find_by(id: room_id)
-    return unless room&.status == "active"
-    return unless room.room_memberships.count >= 2
+    unless room&.status == "active"
+      Rails.logger.info("[NextTurnJob] SKIP room not active (status=#{room&.status})")
+      return
+    end
+    unless room.room_memberships.count >= 2
+      Rails.logger.info("[NextTurnJob] SKIP fewer than 2 members (count=#{room.room_memberships.count})")
+      return
+    end
 
     round = Round.find_by(id: round_id)
-    return unless round&.room_id == room.id
+    unless round&.room_id == room.id
+      Rails.logger.info("[NextTurnJob] SKIP round not found or mismatched")
+      return
+    end
 
     last_turn = round.turns.order(:id).last
-    return unless last_turn&.status == "completed"
+    unless last_turn&.status == "completed"
+      Rails.logger.info("[NextTurnJob] SKIP last turn not completed (status=#{last_turn&.status})")
+      return
+    end
 
     drawer = room.next_drawer_after(last_turn.user)
     turn = round.create_selecting_turn(drawer_user: drawer)

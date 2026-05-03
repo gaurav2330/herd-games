@@ -2,9 +2,17 @@ class NextRoundJob < ApplicationJob
   queue_as :game_critical
 
   def perform(room_id)
+    Rails.logger.info("[NextRoundJob] START room_id=#{room_id}")
+
     room = Room.find_by(id: room_id)
-    return unless room&.status == "active"
-    return unless room.room_memberships.count >= 2
+    unless room&.status == "active"
+      Rails.logger.info("[NextRoundJob] SKIP room not active (status=#{room&.status})")
+      return
+    end
+    unless room.room_memberships.count >= 2
+      Rails.logger.info("[NextRoundJob] SKIP fewer than 2 members (count=#{room.room_memberships.count})")
+      return
+    end
 
     round = room.rounds.create(round_number: room.rounds.count + 1)
     first_drawer = room.users_by_join_order.first

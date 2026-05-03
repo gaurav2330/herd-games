@@ -12,7 +12,7 @@ production:
   adapter: solid_cable
   connects_to:
     database:
-      writing: primary
+      writing: cable
   polling_interval: 0.5.seconds
   trim_interval: 30.seconds
   message_retention: 1.day

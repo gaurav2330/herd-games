@@ -20,6 +20,8 @@ builder:
   arch: amd64
 
 env:
+  clear:
+    SOLID_QUEUE_IN_PUMA: 1
   secret:
     - RAILS_MASTER_KEY
     - DATABASE_URL
