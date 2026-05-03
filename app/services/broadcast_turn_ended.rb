@@ -55,8 +55,81 @@ class BroadcastTurnEnded
       "turns_in_round=#{turns_count} room_memberships=#{memberships_count}"
     )
 
-    if turns_count == memberships_count && round.round_number <= room.config["rounds"]
-      Rails.logger.info("[BroadcastTurnEnded] branch=round_complete (counts equal)")
+    round_complete = turns_count == memberships_count
+    max_rounds = (room.config["rounds"] || 8).to_i
+    game_over = round_complete && round.round_number >= max_rounds
+
+    if game_over
+      Rails.logger.info("[BroadcastTurnEnded] branch=game_over")
+      room.update(status: "ended")
+
+      final_scores = room.scores.includes(:user).order(points: :desc)
+
+      scores_html = final_scores.each_with_index.map do |score, index|
+        rank = index + 1
+        medal = case rank
+                when 1 then "<span class='text-4xl'>&#x1F947;</span>"
+                when 2 then "<span class='text-3xl'>&#x1F948;</span>"
+                when 3 then "<span class='text-3xl'>&#x1F949;</span>"
+                else "<span class='font-headline font-black text-2xl text-on-surface-variant'>##{rank}</span>"
+                end
+
+        highlight = rank == 1 ? "bg-primary-container border-primary scale-105" : "bg-surface-container-lowest border-on-surface"
+
+        "<div class='flex items-center justify-between p-4 #{highlight} border-4 shadow-[4px_4px_0px_0px_#2d2f2f]'>
+          <div class='flex items-center gap-4'>
+            #{medal}
+            <div class='w-12 h-12 bg-primary-container border-4 border-on-surface flex items-center justify-center font-headline font-black text-xl'>
+              #{score.user.username.first.upcase}
+            </div>
+            <span class='font-headline font-bold text-lg uppercase'>#{score.user.username}</span>
+          </div>
+          <span class='font-headline font-black text-3xl text-primary'>#{score.points}</span>
+        </div>"
+      end.join
+
+      game_over_html = "
+        <section class='flex-1 flex flex-col items-center justify-center gap-8 p-8' id='game-center'>
+          <div class='text-center'>
+            <p class='font-headline font-bold text-sm uppercase tracking-widest text-on-surface-variant mb-2'>Game Over</p>
+            <h2 class='font-headline font-black text-6xl uppercase text-primary tracking-widest'>Final Scores</h2>
+          </div>
+          <div class='w-full max-w-lg flex flex-col gap-3'>
+            #{scores_html}
+          </div>
+        </section>
+      "
+
+      Turbo::StreamsChannel.broadcast_replace_to(
+        room,
+        target: "game-center",
+        html: game_over_html
+      )
+
+      Turbo::StreamsChannel.broadcast_replace_to(
+        room,
+        target: "game-timer",
+        html: "<span id='game-timer' class='text-on-surface-variant font-headline font-black text-3xl leading-none'>--</span>"
+      )
+
+      Turbo::StreamsChannel.broadcast_replace_to(
+        room,
+        target: "chat-input",
+        html: "<div id='chat-input' class='p-3 bg-surface-container border-t-4 border-on-surface'>
+          <div class='w-full p-3 bg-surface border-4 border-outline-variant text-on-surface-variant font-bold text-center text-sm uppercase opacity-60'>
+            <span class='material-symbols-outlined text-sm align-middle'>sports_score</span>
+            Game Over
+          </div>
+        </div>"
+      )
+
+      Turbo::StreamsChannel.broadcast_update_to(
+        room,
+        target: "word-display",
+        html: "<span class='font-headline font-bold text-lg text-on-surface-variant uppercase'>Game Over</span>"
+      )
+    elsif round_complete
+      Rails.logger.info("[BroadcastTurnEnded] branch=round_complete")
       Turbo::StreamsChannel.broadcast_replace_to(
         room,
         target: "game-center",
